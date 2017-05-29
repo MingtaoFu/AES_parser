@@ -1,0 +1,7 @@
+cmake-build-debug/
+cmake-build-release/
+.idea/
+build/
+nwjs_addon/cache/
+nwjs_addon/node_modules/
+nwjs_addon/build/

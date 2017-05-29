@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Hello World!</title>
+		<link rel="stylesheet" href="./styles/bootstrap.min.css">
+		<!--<link rel="stylesheet" href="./styles/bootstrap-theme.min.css">-->
+		<style>
+			#key-num-container b, #state-label-container b{
+				display: block;
+			}
+			@font-face {
+				font-family: monaco;
+				src: url(./styles/fonts/monaco.ttf);
+			}
+			* {
+				font-family:monaco, monospace;
+			}
+			.form-inline label {
+				width: 35px;
+			}
+			.mb10 {
+				margin-bottom: 10px !important;
+			}
+			.well {
+				margin-bottom: 0;
+			}
+			hr {
+				margin-bottom: 12px;
+				margin-top: 12px;
+			}
+			#file-form label {
+				width: 30px;
+			}
+		</style>
+	</head>
+	<body>
+		<!--
+		<nav class="navbar navbar-default">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="#">Brand</a>
+				</div>
+
+				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+					<ul class="nav navbar-nav">
+						<li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li>
+						<li><a href="#">Link</a></li>
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+							<ul class="dropdown-menu">
+								<li><a href="#">Action</a></li>
+								<li><a href="#">Another action</a></li>
+								<li><a href="#">Something else here</a></li>
+								<li role="separator" class="divider"></li>
+								<li><a href="#">Separated link</a></li>
+								<li role="separator" class="divider"></li>
+								<li><a href="#">One more separated link</a></li>
+							</ul>
+						</li>
+					</ul>
+					<form class="navbar-form navbar-left">
+						<div class="form-group">
+							<input type="text" class="form-control" placeholder="Search">
+						</div>
+						<button type="submit" class="btn btn-default">Submit</button>
+					</form>
+					<ul class="nav navbar-nav navbar-right">
+						<li><a href="#">Link</a></li>
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+							<ul class="dropdown-menu">
+								<li><a href="#">Action</a></li>
+								<li><a href="#">Another action</a></li>
+								<li><a href="#">Something else here</a></li>
+								<li role="separator" class="divider"></li>
+								<li><a href="#">Separated link</a></li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</nav>
+		-->
+		<div id="scale-container" style="width:1000px;height:650px;overflow:hidden;margin-top:15px">
+		<div class="container" style="transform:scale(0.85);transform-origin:left top;width:1170px!important">
+			<div class="row">
+				<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+					<div class="panel panel-primary">
+						<div class="panel-heading">DATA ENCRIPTING</div>
+						<div class="panel-body">
+							<form class="form-inline" data-toggle="validator" onsubmit="return false">
+								<div class="row">
+									<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+										<div class="form-group mb10">
+											<label for="data-input">IN</label>
+											<input pattern="^[0-9a-fA-F]{16}$" value="abcdef1234567890" required
+                                                   class="form-control" id="data-input" placeholder="16 hex">
+										</div>
+										<div class="form-group">
+											<label for="data-output">OUT</label>
+											<input type="text" class="form-control" id="data-output" readonly>
+										</div>
+									</div>
+									<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+										<div class="form-group mb10">
+											<label for="data-key">KEY</label>
+											<input class="form-control" pattern="^[0-9a-fA-F]{16}$" required
+                                                   id="data-key" placeholder="16 hex" value="aaaaaaaaaaaaaaaa">
+										</div>
+										<button type="submit" class="btn btn-primary" id="data-encrypt-btn">Encrypt</button>
+										<button type="submit" class="btn btn-primary" id="data-decrypt-btn">Decrypt</button>
+									</div>
+								</div>
+							</form>
+							<hr>
+							<div class="row">
+								<div class="col-lg-5 col-md-5 col-sm-5 col-xs-5">
+									<div class="well well-sm">
+										<div id="key-num-container" class="" style="display:inline-block">
+											<b>00:</b> 
+											<b>01:</b> 
+											<b>02:</b> 
+											<b>03:</b> 
+											<b>04:</b> 
+											<b>05:</b> 
+											<b>06:</b> 
+											<b>07:</b> 
+											<b>08:</b> 
+											<b>09:</b> 
+											<b>10:</b> 
+											<b>11:</b> 
+											<b>12:</b> 
+											<b>13:</b> 
+											<b>14:</b> 
+											<b>15:</b> 
+										</div>
+										<div id="keys-container" class="" style="display:inline-block;">
+											<div>12 34 56 78 90 ab</div>
+											<div>12 34 56 78 90 ab</div>
+											<div>12 34 56 78 90 ab</div>
+											<div>12 34 56 78 90 ab</div>
+											<div>10 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-lg-7 col-md-7 col-sm-7 col-xs-7">
+									<div class="well well-sm">
+										<div id="state-label-container" style="display:inline-block">
+											<b>INPUT&nbsp;&nbsp;:</b> 
+											<b>IP&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</b> 
+											<b>Round00:</b> 
+											<b>Round01:</b> 
+											<b>Round02:</b> 
+											<b>Round03:</b> 
+											<b>Round04:</b> 
+											<b>Round05:</b> 
+											<b>Round06:</b> 
+											<b>Round07:</b> 
+											<b>Round08:</b> 
+											<b>Round09:</b> 
+											<b>Round10:</b> 
+											<b>Round11:</b> 
+											<b>Round12:</b> 
+											<b>Round13:</b> 
+											<b>Round14:</b> 
+											<b>Round15:</b> 
+											<b>IP_INV :</b> 
+											<b>OUTPUT :</b> 
+										</div>
+										<div id="state-container" style="display:inline-block">
+											<div>10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div> <!-- panel body -->
+					</div> <!-- panel -->
+					<div class="panel panel-default">
+						<div class="panel-heading">FILE ENCRIPTING</div>
+						<div class="panel-body">
+							<form id="file-form" class="form-inline" data-toggle="validator" onsubmit="return false">
+								<div class="row">
+									<div class="col-lg-7 col-md-7 col-sm-7 col-xs-7">
+										<div class="form-group mb10">
+											<label for="open-path">IN</label>
+											<div class="input-group">
+												<input type="text" class="form-control" id="open-path"
+                                                       required placeholder="file path">
+												<span class="input-group-btn">
+													<button class="btn btn-default" type="button" id="open-btn">OPEN</button>
+                                                    <input style="display:none;" id="open-file" type="file" />
+												</span>
+											</div><!-- /input-group -->
+										</div>
+										<div class="form-group">
+											<label for="save-path">OUT</label>
+											<div class="input-group">
+												<input class="form-control" id="save-path"
+                                                       required placeholder="file path">
+												<span class="input-group-btn">
+													<button class="btn btn-default" type="button" id="save-btn">OPEN</button>
+                                                    <input style="display:none;" id="save-file" type="file" nwsaveas  />
+												</span>
+											</div><!-- /input-group -->
+										</div>
+									</div>
+									<div class="col-lg-5 col-md-5 col-sm-5 col-xs-5" style="padding-left:5px">
+										<div class="form-group mb10">
+											<label for="file-key">KEY</label>
+											<input class="form-control" id="file-key" required  pattern="^[0-9a-fA-F]{16}$"
+                                                   placeholder="16 hex" style="width: 170px">
+										</div>
+										<button type="submit" class="btn btn-primary" id="file-encrypt-btn">Encrypt</button>
+										<button type="submit" class="btn btn-primary" id="file-decrypt-btn">Decrypt</button>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+					<div class="row">
+						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+							<div class="panel panel-default">
+								<div class="panel-heading">F(R, K) COMPUTING</div>
+								<div class="panel-body">
+									<form id="F-form">
+										<div class="form-group">
+											<label for="f-R">R</label>
+											<input class="form-control" id="f-R" placeholder="8 hex" name="R">
+										</div>
+										<div class="form-group">
+											<label for="f-K">K</label>
+											<input class="form-control" id="f-K" placeholder="12 hex" name="K">
+										</div>
+										<div class="form-group">
+											<label for="f-result">RESULT</label>
+											<input class="form-control" id="f-result" name="result" readonly>
+										</div>
+										<button type="submit" class="btn btn-default">Submit</button>
+									</form>
+								</div>
+							</div>
+							<div class="panel panel-default">
+								<div class="panel-heading">E(R) COMPUTING</div>
+								<div class="panel-body">
+									<form id="E-form">
+										<div class="form-group">
+											<label for="e-r">R</label>
+											<input class="form-control" id="e-r" name="r" placeholder="8 hex">
+										</div>
+										<div class="form-group">
+											<label for="e-result">RESULT</label>
+											<input class="form-control" id="e-result" name="result" readonly>
+										</div>
+										<button type="submit" class="btn btn-default">Submit</button>
+									</form>
+								</div>
+							</div>
+						</div>
+						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+							<div class="panel panel-default">
+								<div class="panel-heading">XOR COMPUTING</div>
+								<div class="panel-body">
+									<form id="XOR-form">
+										<div class="form-group">
+											<label for="xor-1">PARAM 1</label>
+											<input class="form-control" id="xor-1" name="param1" placeholder="8 hex">
+										</div>
+										<div class="form-group">
+											<label for="xor-2">PARAM 2</label>
+											<input class="form-control" id="xor-2" name="param2" placeholder="8 hex">
+										</div>
+										<div class="form-group">
+											<label for="xor-result">RESULT</label>
+											<input class="form-control" id="xor-result" name="result" readonly>
+										</div>
+										<button type="submit" class="btn btn-default">Submit</button>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">S_BOX COMPUTING</div>
+                                <div class="panel-body">
+                                    <form id="SBOX-form">
+                                        <div class="form-group">
+                                            <label for="sbox-input">INPUT</label>
+                                            <input class="form-control" id="sbox-input" name="input">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="sbox-result">RESULT</label>
+                                            <input class="form-control" id="sbox-result" readonly name="result">
+                                        </div>
+                                        <button type="submit" class="btn btn-default">Submit</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- row -->
+        </div> <!-- container -->
+        </div>
+    </body>
+
+    <script src="./scripts/jquery.min.js"></script>
+    <script src="./scripts/bootstrap.min.js"></script>
+    <script src="./scripts/index.js"></script>
+    <script src="./scripts/validator.min.js"></script>
+
+</html>
