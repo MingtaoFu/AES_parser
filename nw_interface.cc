@@ -93,7 +93,47 @@ namespace demo {
 	}
 	*/
 
-	void Method(const FunctionCallbackInfo<Value>& args) {
+    void char2num(char* input, char* output) {
+        int i = 0;
+        unsigned char ch, ch2;
+        while ((ch = input[i]) != '\0') {
+            ch2 = input[i+1];
+            if (ch >= 48 && ch <= 57) {
+                // 数字
+                ch = (unsigned char)(ch - 48);
+            } else if (ch >= 97 && ch <= 102) {
+                // 小写字母
+                ch = (unsigned char)(ch - 87);
+            } else if (ch >= 65 && ch <= 70) {
+                // 大写字母
+                ch = (unsigned char)(ch - 55);
+            } else {
+                printf("输入有错误\n");
+                return;
+            }
+
+            if (ch2 >= 48 && ch2 <= 57) {
+                // 数字
+                ch2 = (unsigned char)(ch2 - 48);
+            } else if (ch2 >= 97 && ch2 <= 102) {
+                // 小写字母
+                ch2 = (unsigned char)(ch2 - 87);
+            } else if (ch2 >= 65 && ch2 <= 70) {
+                // 大写字母
+                ch2 = (unsigned char)(ch2 - 55);
+            } else {
+                printf("输入有错误\n");
+                return;
+            }
+
+            output[i / 2] = ch;
+            output[i / 2] <<= 4;
+            output[i / 2] |= ch2;
+            i+=2;
+        }
+    }
+
+    void Method(const FunctionCallbackInfo<Value>& args) {
 		Isolate* isolate = args.GetIsolate();
 
 		String::Utf8Value v8_mode(args[0]->ToString());
@@ -103,30 +143,26 @@ namespace demo {
 		char* key = *v8_key;
 		char* plain = *v8_plain;
 
+        char key_num[17];
+        char plain_num[17];
+        char2num(key, key_num);
+        char2num(plain, plain_num);
+
 		//init_key(char2bit(key));
 		AES_KEY aes_key;
-		AES_set_encrypt_key2(NULL, NULL, &aes_key);
-		printf("dsaadsada\n");
 
+
+        unsigned char out[150];
 		if(!strcmp(mode, "-en")) {
-		//	encrypt_num(plain);
-			const unsigned char paint[] =
-            {0x54, 0x77, 0x6F, 0x20, 0x4F, 0x6E, 0x65,
-             0x20, 0x4E, 0x69, 0x6E, 0x65, 0x20, 0x54, 0x77, 0x6F};
-			unsigned char out[150];
-			AES_encrypt_data2(paint, out, &aes_key);
-
-			for (int i = 0; i < 16; i++) {
-				printf("%x", out[i]);
-			}			/*
-			for (int i = 0; i < 16; i++) {
-				printf("%x", out[i]);
-			}
-			 */
+            AES_set_encrypt_key2(reinterpret_cast<const unsigned char*>(key_num), NULL, &aes_key);
+			AES_encrypt_data2(reinterpret_cast<const unsigned char*>(plain_num), out, &aes_key);
 		} else if (!strcmp(mode, "-dn")) {
-			//	decrypt_num(plain);
-		}
-
+            printf("sadsadsadsadsa\n");
+            AES_set_decrypt_key2_test(reinterpret_cast<const unsigned char*>(key_num), NULL, &aes_key);
+            AES_decrypt_data2(reinterpret_cast<const unsigned char*>(plain_num), out, &aes_key);
+		} else {
+            return;
+        }
 
 		Local<Object> v8_storage = Object::New(isolate);
 		Local<Array> v8_storage_words = Array::New(isolate);

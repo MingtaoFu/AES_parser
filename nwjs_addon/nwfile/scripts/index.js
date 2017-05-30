@@ -35,6 +35,28 @@ try {
 		}
 	});
 
+    document.querySelector("#data-decrypt-btn").addEventListener("click", function() {
+        if ($(this).hasClass("disabled")) {
+            return false;
+        }
+
+        var key = data_key_DOM.value;
+        var input = data_input_DOM.value;
+        var ouput = AES_data("-dn", key, input);
+        //alert(output);
+        data_output_DOM.value = ouput.cipher_text;
+
+        var keys = ouput.words;
+        for (var i in keys) {
+            keys_container[i].innerText = keys[i];
+        }
+
+        var states = ouput.states;
+        for (var i in states) {
+            states_container[i].innerText = states[i];
+        }
+    });
+
 	document.querySelector("#F-form").addEventListener("submit", function (e) {
 	    e.preventDefault();
 	    this.result.value = F_computing(this.R.value, "0000" + this.K.value);

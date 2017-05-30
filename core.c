@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 
+#define GETU32(p) (*((uint32_t*)(p)))
 #define ROTATE(a,n)  ({ register unsigned int ret;   \
                 asm (           \
                 "roll %1,%0"        \
@@ -10,16 +11,29 @@
                 : "cc");        \
                ret;             \
             })
+void print_storage2(char* sto, uint32_t* pt) {
+    for (int i = 0; i < 4; i++) {
+        uint32_t t = pt[i];
+        printf("%x\n", t );
+        for (int j = 0; j < 4; j++) {
+            sprintf(&sto[(i * 4 + j) * 3], "%02x ", (t >> (j * 8)) & 0xff );
+            //printf("%02x ", (t >> (j * 2)) & 0xff );
+        }
+        printf("\n");
 
+    }
+}
 
-int AES_set_decrypt_key(const unsigned char *userKey, const int bits, AES_KEY *key) {
+int AES_set_decrypt_key2_test(const unsigned char *userKey, const int bits, AES_KEY *key) {
+    printf("1111111111\n");
 
     uint32_t *rk;
     int i, j, status;
     uint32_t temp;
 
+    printf("333333333333333\n");
     /* first, start with an encryption schedule */
-    status = AES_set_encrypt_key(userKey, bits, key);
+    status = AES_set_encrypt_key2(userKey, NULL, key);
     //if (status < 0)
      //   return status;
 
@@ -32,6 +46,7 @@ int AES_set_decrypt_key(const unsigned char *userKey, const int bits, AES_KEY *k
         temp = rk[i + 2]; rk[i + 2] = rk[j + 2]; rk[j + 2] = temp;
         temp = rk[i + 3]; rk[i + 3] = rk[j + 3]; rk[j + 3] = temp;
     }
+    printf("333333333333333\n");
     /* apply the inverse MixColumn transform to all round keys but the first and the last: */
     for (i = 1; i < (key->rounds); i++) {
         rk += 4;
@@ -57,12 +72,12 @@ int AES_set_decrypt_key(const unsigned char *userKey, const int bits, AES_KEY *k
 
         }
     }
+    printf("333333333333333\n");
 
     return 0;
 }
 
-void AES_decrypt(const unsigned char *in, unsigned char *out, const AES_KEY *key)
-{
+void AES_decrypt(const unsigned char *in, unsigned char *out, const AES_KEY *key) {
 
     const uint32_t *rk;
     uint32_t s0, s1, s2, s3, t[4];
@@ -75,10 +90,10 @@ void AES_decrypt(const unsigned char *in, unsigned char *out, const AES_KEY *key
      * and add initial round key:
      */
 
-    s0 = 0x5f50c329 ^ rk[0];
-    s1 = 0xf6201457 ^ rk[1];
-    s2 = 0xb3992240 ^ rk[2];
-    s3 = 0x3ad7021a ^ rk[3];
+    s0 = GETU32(in     );
+    s1 = GETU32(in +  4);
+    s2 = GETU32(in +  8);
+    s3 = GETU32(in + 12);
 
     //prefetch256(Td4);
 
@@ -208,7 +223,6 @@ void AES_decrypt(const unsigned char *in, unsigned char *out, const AES_KEY *key
             rk[3];
 }
 
-
 int AES_set_encrypt_key2(const unsigned char *userKey, const int bits, AES_KEY *key) {
     printf("-------------------\n%d\n--------------------", 1);
     uint32_t *rk, temp;
@@ -217,12 +231,10 @@ int AES_set_encrypt_key2(const unsigned char *userKey, const int bits, AES_KEY *
     rk = key->rd_key;
     key->rounds = 10;
 
-    rk[0] = 0x74616854;
-    rk[1] = 0x796D2073;
-    rk[2] = 0x6E754B20;
-    rk[3] = 0x75462067;
-
-    printf("-------------------\n%d\n--------------------", rk[0]);
+    rk[0] = GETU32(userKey     );
+    rk[1] = GETU32(userKey +  4);
+    rk[2] = GETU32(userKey +  8);
+    rk[3] = GETU32(userKey + 12);
 
     while(1) {
         temp = rk[3];
@@ -261,31 +273,16 @@ int AES_set_encrypt_key2(const unsigned char *userKey, const int bits, AES_KEY *
      */
 }
 
-void print_storage2(char* sto, uint32_t* pt) {
-    printf("----------------------------haha---------------------------\n");
-    for (int i = 0; i < 4; i++) {
-        uint32_t t = pt[i];
-        printf("%x\n", t );
-        for (int j = 0; j < 4; j++) {
-            sprintf(&sto[(i * 4 + j) * 3], "%02x ", (t >> (j * 8)) & 0xff );
-            printf("%02x ", (t >> (j * 2)) & 0xff );
-        }
-        printf("\n");
-
-    }
-}
-
 void AES_encrypt_data2(const unsigned char *in, unsigned char *out, const AES_KEY *key) {
     const uint32_t *rk;
     uint32_t s[4], t[4];
-    int r;
 
     rk = key->rd_key;
 
-    t[0] = 0x206F7754;
-    t[1] = 0x20656E4F;
-    t[2] = 0x656E694E;
-    t[3] = 0x6F775420;
+    t[0] = GETU32(in     );
+    t[1] = GETU32(in +  4);
+    t[2] = GETU32(in +  8);
+    t[3] = GETU32(in + 12);
     // input
     print_storage2(sto.states[0], t);
 
@@ -403,7 +400,169 @@ void AES_encrypt_data2(const unsigned char *in, unsigned char *out, const AES_KE
     }
     // addRoundKey
     print_storage2(sto.states[40], s);
+    // output
     print_storage2(sto.states[41], s);
+}
+
+void AES_decrypt_data2(const unsigned char *in, unsigned char *out, const AES_KEY *key) {
+
+    const uint32_t *rk;
+    uint32_t s[4], t[4];
+    int r;
+
+    rk = key->rd_key;
+
+    printf("sadsadsadsadsa\n");
+    /*
+     * map byte array block to cipher state
+     * and add initial round key:
+     */
+
+    t[0] = GETU32(in     );
+    t[1] = GETU32(in +  4);
+    t[2] = GETU32(in +  8);
+    t[3] = GETU32(in + 12);
+    // input
+    print_storage2(sto.states[0], t);
+
+    s[0] = t[0] ^ rk[0];
+    s[1] = t[1] ^ rk[1];
+    s[2] = t[2] ^ rk[2];
+    s[3] = t[3] ^ rk[3];
+    // addRoundKey
+    print_storage2(sto.states[1], s);
+
+
+    for (int round = 0; round < 9; round++) {
+        t[0] = ((s[0]) & 0xff) ^
+               ((s[1] >> 24)) << 24 ^
+               ((s[2] >> 16) & 0xff) << 16 ^
+               ((s[3] >>  8) & 0xff) <<  8;
+        t[1] = ((s[1]) & 0xff) ^
+               ((s[0] >> 8) & 0xff) << 8 ^
+               ((s[3] >> 16) & 0xff) << 16 ^
+               ((s[2] >> 24)) << 24;
+        t[2] = ((s[2]) & 0xff) ^
+               ((s[1] >> 8) & 0xff) << 8 ^
+               ((s[0] >> 16) & 0xff) << 16 ^
+               ((s[3] >> 24)) << 24;
+        t[3] = ((s[3]) & 0xff) ^
+               ((s[2] >> 8) & 0xff) << 8 ^
+               ((s[1] >> 16) & 0xff) << 16 ^
+               ((s[0] >> 24)) << 24;
+        // invShiftRows
+        print_storage2(sto.states[round * 4 + 2], t);
+
+
+        s[0] = (uint32_t) Td4[(t[0]) & 0xff] ^
+               (uint32_t) Td4[(t[0] >> 8) & 0xff] << 8 ^
+               (uint32_t) Td4[(t[0] >> 16) & 0xff] << 16 ^
+               (uint32_t) Td4[(t[0] >> 24)] << 24;
+        s[1] = (uint32_t) Td4[(t[1]) & 0xff] ^
+               (uint32_t) Td4[(t[1] >> 8) & 0xff] << 8 ^
+               (uint32_t) Td4[(t[1] >> 16) & 0xff] << 16 ^
+               (uint32_t) Td4[(t[1] >> 24)] << 24;
+        s[2] = (uint32_t) Td4[(t[2]) & 0xff] ^
+               (uint32_t) Td4[(t[2] >> 8) & 0xff] << 8 ^
+               (uint32_t) Td4[(t[2] >> 16) & 0xff] << 16 ^
+               (uint32_t) Td4[(t[2] >> 24)] << 24;
+        s[3] = (uint32_t) Td4[(t[3]) & 0xff] ^
+               (uint32_t) Td4[(t[3] >> 8) & 0xff] << 8 ^
+               (uint32_t) Td4[(t[3] >> 16) & 0xff] << 16 ^
+               (uint32_t) Td4[(t[3] >> 24)] << 24;
+        //invSubBytes
+        print_storage2(sto.states[round * 4 + 3], s);
+
+
+
+        /* now do the linear transform using words */
+        {
+            int i;
+            uint32_t tp1, tp2, tp4, tp8, tp9, tpb, tpd, tpe, m;
+
+            for (i = 0; i < 4; i++) {
+                tp1 = s[i];
+                m = tp1 & 0x80808080;
+                tp2 = ((tp1 & 0x7f7f7f7f) << 1) ^
+                      ((m - (m >> 7)) & 0x1b1b1b1b);
+                m = tp2 & 0x80808080;
+                tp4 = ((tp2 & 0x7f7f7f7f) << 1) ^
+                      ((m - (m >> 7)) & 0x1b1b1b1b);
+                m = tp4 & 0x80808080;
+                tp8 = ((tp4 & 0x7f7f7f7f) << 1) ^
+                      ((m - (m >> 7)) & 0x1b1b1b1b);
+                tp9 = tp8 ^ tp1;
+                tpb = tp9 ^ tp2;
+                tpd = tp9 ^ tp4;
+                tpe = tp8 ^ tp4 ^ tp2;
+                s[i] = tpe ^ ROTATE(tpd, 16) ^
+                       ROTATE(tp9, 8) ^ ROTATE(tpb, 24);
+                //t[i] ^= rk[4+i];
+            }
+        }
+        // mixColumn
+        print_storage2(sto.states[round * 4 + 4], s);
+
+        for (int i = 0; i < 4; i++) {
+            s[i] ^= rk[(round + 1) * 4 + i];
+        }
+        // addRoundKey
+        print_storage2(sto.states[round * 4 + 5], s);
+    }
+
+    /*
+     * apply last round and
+     * map cipher state to byte array block:
+     */
+
+    //prefetch256(Td4);
+    t[0] = ((s[0]) & 0xff) ^
+           ((s[1] >> 24)) << 24 ^
+           ((s[2] >> 16) & 0xff) << 16 ^
+           ((s[3] >>  8) & 0xff) <<  8;
+    t[1] = ((s[1]) & 0xff) ^
+           ((s[0] >> 8) & 0xff) << 8 ^
+           ((s[3] >> 16) & 0xff) << 16 ^
+           ((s[2] >> 24)) << 24;
+    t[2] = ((s[2]) & 0xff) ^
+           ((s[1] >> 8) & 0xff) << 8 ^
+           ((s[0] >> 16) & 0xff) << 16 ^
+           ((s[3] >> 24)) << 24;
+    t[3] = ((s[3]) & 0xff) ^
+           ((s[2] >> 8) & 0xff) << 8 ^
+           ((s[1] >> 16) & 0xff) << 16 ^
+           ((s[0] >> 24)) << 24;
+    // shiftRows
+    print_storage2(sto.states[38], t);
+
+    s[0] = (uint32_t) Td4[(t[0]) & 0xff] ^
+           (uint32_t) Td4[(t[0] >> 8) & 0xff] << 8 ^
+           (uint32_t) Td4[(t[0] >> 16) & 0xff] << 16 ^
+           (uint32_t) Td4[(t[0] >> 24)] << 24;
+    s[1] = (uint32_t) Td4[(t[1]) & 0xff] ^
+           (uint32_t) Td4[(t[1] >> 8) & 0xff] << 8 ^
+           (uint32_t) Td4[(t[1] >> 16) & 0xff] << 16 ^
+           (uint32_t) Td4[(t[1] >> 24)] << 24;
+    s[2] = (uint32_t) Td4[(t[2]) & 0xff] ^
+           (uint32_t) Td4[(t[2] >> 8) & 0xff] << 8 ^
+           (uint32_t) Td4[(t[2] >> 16) & 0xff] << 16 ^
+           (uint32_t) Td4[(t[2] >> 24)] << 24;
+    s[3] = (uint32_t) Td4[(t[3]) & 0xff] ^
+           (uint32_t) Td4[(t[3] >> 8) & 0xff] << 8 ^
+           (uint32_t) Td4[(t[3] >> 16) & 0xff] << 16 ^
+           (uint32_t) Td4[(t[3] >> 24)] << 24;
+    //subBytes
+    print_storage2(sto.states[39], s);
+
+    for (int i = 0; i < 4; i++) {
+        s[i] ^= rk[40 + i];
+    }
+    // addRoundKey
+    print_storage2(sto.states[40], s);
+       // output
+    print_storage2(sto.states[41], s);
+
+
 }
 
 void AES_encrypt2(const unsigned char *in, unsigned char *out, const AES_KEY *key) {
