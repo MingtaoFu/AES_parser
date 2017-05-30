@@ -61,7 +61,6 @@ int AES_set_decrypt_key(const unsigned char *userKey, const int bits, AES_KEY *k
     return 0;
 }
 
-
 void AES_decrypt(const unsigned char *in, unsigned char *out, const AES_KEY *key)
 {
 
@@ -210,7 +209,8 @@ void AES_decrypt(const unsigned char *in, unsigned char *out, const AES_KEY *key
 }
 
 
-int AES_set_encrypt_key(const unsigned char *userKey, const int bits, AES_KEY *key) {
+int AES_set_encrypt_key2(const unsigned char *userKey, const int bits, AES_KEY *key) {
+    printf("-------------------\n%d\n--------------------", 1);
     uint32_t *rk, temp;
     int i = 0;
 
@@ -221,6 +221,8 @@ int AES_set_encrypt_key(const unsigned char *userKey, const int bits, AES_KEY *k
     rk[1] = 0x796D2073;
     rk[2] = 0x6E754B20;
     rk[3] = 0x75462067;
+
+    printf("-------------------\n%d\n--------------------", rk[0]);
 
     while(1) {
         temp = rk[3];
@@ -258,18 +260,153 @@ int AES_set_encrypt_key(const unsigned char *userKey, const int bits, AES_KEY *k
     }
      */
 }
-static void prefetch256(const void *table) {
-    volatile unsigned long *t = (void*)table, ret;
-    unsigned long sum;
-    int i;
-    for (sum = 0, i = 0; i < 256 / sizeof(t[0]); i += 32 / sizeof(t[0])) {
-        sum ^= t[i];
+
+void print_storage2(char* sto, uint32_t* pt) {
+    printf("----------------------------haha---------------------------\n");
+    for (int i = 0; i < 4; i++) {
+        uint32_t t = pt[i];
+        printf("%x\n", t );
+        for (int j = 0; j < 4; j++) {
+            sprintf(&sto[(i * 4 + j) * 3], "%02x ", (t >> (j * 8)) & 0xff );
+            printf("%02x ", (t >> (j * 2)) & 0xff );
+        }
+        printf("\n");
+
     }
-    ret = sum;
 }
 
+void AES_encrypt_data2(const unsigned char *in, unsigned char *out, const AES_KEY *key) {
+    const uint32_t *rk;
+    uint32_t s[4], t[4];
+    int r;
 
-void AES_encrypt(const unsigned char *in, unsigned char *out, const AES_KEY *key) {
+    rk = key->rd_key;
+
+    t[0] = 0x206F7754;
+    t[1] = 0x20656E4F;
+    t[2] = 0x656E694E;
+    t[3] = 0x6F775420;
+    // input
+    print_storage2(sto.states[0], t);
+
+    s[0] = t[0] ^ rk[0];
+    s[1] = t[1] ^ rk[1];
+    s[2] = t[2] ^ rk[2];
+    s[3] = t[3] ^ rk[3];
+    // addRoundKey
+    print_storage2(sto.states[1], s);
+
+    for (int round = 0; round < 9; round++) {
+        t[0] = (uint32_t) Te4[(s[0]) & 0xff] ^
+               (uint32_t) Te4[(s[0] >> 8) & 0xff] << 8 ^
+               (uint32_t) Te4[(s[0] >> 16) & 0xff] << 16 ^
+               (uint32_t) Te4[(s[0] >> 24)] << 24;
+        t[1] = (uint32_t) Te4[(s[1]) & 0xff] ^
+               (uint32_t) Te4[(s[1] >> 8) & 0xff] << 8 ^
+               (uint32_t) Te4[(s[1] >> 16) & 0xff] << 16 ^
+               (uint32_t) Te4[(s[1] >> 24)] << 24;
+        t[2] = (uint32_t) Te4[(s[2]) & 0xff] ^
+               (uint32_t) Te4[(s[2] >> 8) & 0xff] << 8 ^
+               (uint32_t) Te4[(s[2] >> 16) & 0xff] << 16 ^
+               (uint32_t) Te4[(s[2] >> 24)] << 24;
+        t[3] = (uint32_t) Te4[(s[3]) & 0xff] ^
+               (uint32_t) Te4[(s[3] >> 8) & 0xff] << 8 ^
+               (uint32_t) Te4[(s[3] >> 16) & 0xff] << 16 ^
+               (uint32_t) Te4[(s[3] >> 24)] << 24;
+        //subBytes
+        print_storage2(sto.states[round * 4 + 2], t);
+
+        s[0] = ((t[0]) & 0xff) ^
+               ((t[1] >> 8) & 0xff) << 8 ^
+               ((t[2] >> 16) & 0xff) << 16 ^
+               ((t[3] >> 24)) << 24;
+        s[1] = ((t[1]) & 0xff) ^
+               ((t[2] >> 8) & 0xff) << 8 ^
+               ((t[3] >> 16) & 0xff) << 16 ^
+               ((t[0] >> 24)) << 24;
+        s[2] = ((t[2]) & 0xff) ^
+               ((t[3] >> 8) & 0xff) << 8 ^
+               ((t[0] >> 16) & 0xff) << 16 ^
+               ((t[1] >> 24)) << 24;
+        s[3] = ((t[3]) & 0xff) ^
+               ((t[0] >> 8) & 0xff) << 8 ^
+               ((t[1] >> 16) & 0xff) << 16 ^
+               ((t[2] >> 24)) << 24;
+        // shiftRows
+        print_storage2(sto.states[round * 4 + 3], s);
+
+        {
+            int i;
+            uint32_t r0, r1, r2;
+
+            for (i = 0; i < 4; i++) {
+                r0 = s[i];
+                r1 = r0 & 0x80808080;
+                // 低7位左移, 进行模除
+                r2 = ((r0 & 0x7f7f7f7f) << 1) ^
+                     ((r1 - (r1 >> 7)) & 0x1b1b1b1b);
+                s[i] = r2 ^ ROTATE(r2, 24) ^ ROTATE(r0, 24) ^
+                       ROTATE(r0, 16) ^ ROTATE(r0, 8);
+                //t[i] ^= rk[4+i];
+            }
+        }
+        // mixColumn
+        print_storage2(sto.states[round * 4 + 4], s);
+
+        for (int i = 0; i < 4; i++) {
+            s[i] ^= rk[(round + 1) * 4 + i];
+        }
+        // addRoundKey
+        print_storage2(sto.states[round * 4 + 5], s);
+    }
+
+    t[0] = (uint32_t) Te4[(s[0]) & 0xff] ^
+           (uint32_t) Te4[(s[0] >> 8) & 0xff] << 8 ^
+           (uint32_t) Te4[(s[0] >> 16) & 0xff] << 16 ^
+           (uint32_t) Te4[(s[0] >> 24)] << 24;
+    t[1] = (uint32_t) Te4[(s[1]) & 0xff] ^
+           (uint32_t) Te4[(s[1] >> 8) & 0xff] << 8 ^
+           (uint32_t) Te4[(s[1] >> 16) & 0xff] << 16 ^
+           (uint32_t) Te4[(s[1] >> 24)] << 24;
+    t[2] = (uint32_t) Te4[(s[2]) & 0xff] ^
+           (uint32_t) Te4[(s[2] >> 8) & 0xff] << 8 ^
+           (uint32_t) Te4[(s[2] >> 16) & 0xff] << 16 ^
+           (uint32_t) Te4[(s[2] >> 24)] << 24;
+    t[3] = (uint32_t) Te4[(s[3]) & 0xff] ^
+           (uint32_t) Te4[(s[3] >> 8) & 0xff] << 8 ^
+           (uint32_t) Te4[(s[3] >> 16) & 0xff] << 16 ^
+           (uint32_t) Te4[(s[3] >> 24)] << 24;
+    //subBytes
+    print_storage2(sto.states[38], t);
+
+    s[0] = ((t[0]) & 0xff) ^
+           ((t[1] >> 8) & 0xff) << 8 ^
+           ((t[2] >> 16) & 0xff) << 16 ^
+           ((t[3] >> 24)) << 24;
+    s[1] = ((t[1]) & 0xff) ^
+           ((t[2] >> 8) & 0xff) << 8 ^
+           ((t[3] >> 16) & 0xff) << 16 ^
+           ((t[0] >> 24)) << 24;
+    s[2] = ((t[2]) & 0xff) ^
+           ((t[3] >> 8) & 0xff) << 8 ^
+           ((t[0] >> 16) & 0xff) << 16 ^
+           ((t[1] >> 24)) << 24;
+    s[3] = ((t[3]) & 0xff) ^
+           ((t[0] >> 8) & 0xff) << 8 ^
+           ((t[1] >> 16) & 0xff) << 16 ^
+           ((t[2] >> 24)) << 24;
+    // shiftRows
+    print_storage2(sto.states[39], s);
+
+    for (int i = 0; i < 4; i++) {
+        s[i] ^= rk[40 + i];
+    }
+    // addRoundKey
+    print_storage2(sto.states[40], s);
+    print_storage2(sto.states[41], s);
+}
+
+void AES_encrypt2(const unsigned char *in, unsigned char *out, const AES_KEY *key) {
     const uint32_t *rk;
     uint32_t s0, s1, s2, s3, t[4];
     int r;
@@ -301,7 +438,8 @@ void AES_encrypt(const unsigned char *in, unsigned char *out, const AES_KEY *key
            (uint32_t)Te4[(s2 >> 24)       ] << 24;
 
     /* now do the linear transform using words */
-    {   int i;
+    {
+        int i;
         uint32_t r0, r1, r2;
 
         for (i = 0; i < 4; i++) {

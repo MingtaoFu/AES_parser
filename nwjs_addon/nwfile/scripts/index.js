@@ -1,6 +1,6 @@
 try {
     var addon = require("./addon");
-	var DES_data = addon.DES_data;
+	var AES_data = addon.AES_data;
     var F_computing = addon.F_computing;
     var XOR_computing = addon.XOR_computing;
     var E_computing = addon.E_computing;
@@ -20,11 +20,11 @@ try {
 
 		var key = data_key_DOM.value;
 		var input = data_input_DOM.value;
-		var ouput = DES_data("-en", key, input);
+		var ouput = AES_data("-en", key, input);
 		//alert(output);
 		data_output_DOM.value = ouput.cipher_text;
 
-		var keys = ouput.keys;
+		var keys = ouput.words;
 		for (var i in keys) {
 			keys_container[i].innerText = keys[i];
 		}

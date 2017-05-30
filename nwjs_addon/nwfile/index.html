@@ -12,6 +12,10 @@
 				font-family: monaco;
 				src: url(./styles/fonts/monaco.ttf);
 			}
+			.well {
+				line-height: 13px;
+				font-size: 12px;
+			}
 			* {
 				font-family:monaco, monospace;
 			}
@@ -34,63 +38,10 @@
 		</style>
 	</head>
 	<body>
-		<!--
-		<nav class="navbar navbar-default">
-			<div class="container-fluid">
-				<div class="navbar-header">
-					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-						<span class="sr-only">Toggle navigation</span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-					</button>
-					<a class="navbar-brand" href="#">Brand</a>
-				</div>
-
-				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-					<ul class="nav navbar-nav">
-						<li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li>
-						<li><a href="#">Link</a></li>
-						<li class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
-							<ul class="dropdown-menu">
-								<li><a href="#">Action</a></li>
-								<li><a href="#">Another action</a></li>
-								<li><a href="#">Something else here</a></li>
-								<li role="separator" class="divider"></li>
-								<li><a href="#">Separated link</a></li>
-								<li role="separator" class="divider"></li>
-								<li><a href="#">One more separated link</a></li>
-							</ul>
-						</li>
-					</ul>
-					<form class="navbar-form navbar-left">
-						<div class="form-group">
-							<input type="text" class="form-control" placeholder="Search">
-						</div>
-						<button type="submit" class="btn btn-default">Submit</button>
-					</form>
-					<ul class="nav navbar-nav navbar-right">
-						<li><a href="#">Link</a></li>
-						<li class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
-							<ul class="dropdown-menu">
-								<li><a href="#">Action</a></li>
-								<li><a href="#">Another action</a></li>
-								<li><a href="#">Something else here</a></li>
-								<li role="separator" class="divider"></li>
-								<li><a href="#">Separated link</a></li>
-							</ul>
-						</li>
-					</ul>
-				</div>
-			</div>
-		</nav>
-		-->
-		<div id="scale-container" style="width:1000px;height:650px;overflow:hidden;margin-top:15px">
+		<div id="scale-container" style="width:1000px;height:680px;overflow:hidden;margin-top:15px">
 		<div class="container" style="transform:scale(0.85);transform-origin:left top;width:1170px!important">
 			<div class="row">
-				<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+				<div class="col-lg-7 col-md-7 col-sm-12 col-xs-12">
 					<div class="panel panel-primary">
 						<div class="panel-heading">DATA ENCRIPTING</div>
 						<div class="panel-body">
@@ -99,8 +50,8 @@
 									<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
 										<div class="form-group mb10">
 											<label for="data-input">IN</label>
-											<input pattern="^[0-9a-fA-F]{16}$" value="abcdef1234567890" required
-                                                   class="form-control" id="data-input" placeholder="16 hex">
+											<input pattern="^[0-9a-fA-F]{32}$" value="54776F204F6E65204E696E652054776F" required
+												   class="form-control" id="data-input" placeholder="32 hex">
 										</div>
 										<div class="form-group">
 											<label for="data-output">OUT</label>
@@ -110,8 +61,8 @@
 									<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
 										<div class="form-group mb10">
 											<label for="data-key">KEY</label>
-											<input class="form-control" pattern="^[0-9a-fA-F]{16}$" required
-                                                   id="data-key" placeholder="16 hex" value="aaaaaaaaaaaaaaaa">
+											<input class="form-control" pattern="^[0-9a-fA-F]{32}$" required
+												   id="data-key" placeholder="32 hex" value="5468617473206D79204B756E67204675">
 										</div>
 										<button type="submit" class="btn btn-primary" id="data-encrypt-btn">Encrypt</button>
 										<button type="submit" class="btn btn-primary" id="data-decrypt-btn">Decrypt</button>
@@ -120,7 +71,7 @@
 							</form>
 							<hr>
 							<div class="row">
-								<div class="col-lg-5 col-md-5 col-sm-5 col-xs-5">
+								<div class="col-lg-5 col-md-5 col-sm-5 col-xs-5" style="width:160px">
 									<div class="well well-sm">
 										<div id="key-num-container" class="" style="display:inline-block">
 											<b>00:</b> 
@@ -138,127 +89,184 @@
 											<b>12:</b> 
 											<b>13:</b> 
 											<b>14:</b> 
-											<b>15:</b> 
+											<b>15:</b>
+                                            <b>16:</b>
+                                            <b>17:</b>
+                                            <b>18:</b>
+                                            <b>19:</b>
+                                            <b>20:</b>
+                                            <b>21:</b>
+                                            <b>22:</b>
+                                            <b>23:</b>
+                                            <b>24:</b>
+                                            <b>25:</b>
+                                            <b>26:</b>
+                                            <b>27:</b>
+                                            <b>28:</b>
+                                            <b>29:</b>
+                                            <b>30:</b>
+                                            <b>31:</b>
+                                            <b>32:</b>
+                                            <b>33:</b>
+                                            <b>34:</b>
+                                            <b>35:</b>
+                                            <b>36:</b>
+                                            <b>37:</b>
+                                            <b>38:</b>
+                                            <b>39:</b>
+                                            <b>40:</b>
+                                            <b>41:</b>
+                                            <b>42:</b>
+                                            <b>43:</b>
 										</div>
 										<div id="keys-container" class="" style="display:inline-block;">
-											<div>12 34 56 78 90 ab</div>
-											<div>12 34 56 78 90 ab</div>
-											<div>12 34 56 78 90 ab</div>
-											<div>12 34 56 78 90 ab</div>
-											<div>10 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00</div>
+											<div>12 34 56 78 </div>
+											<div>12 34 56 78 </div>
+											<div>12 34 56 78 </div>
+											<div>12 34 56 78 </div>
+											<div>10 00 00 00 </div>
+											<div>10 00 00 00 </div>
+											<div>10 00 00 00 </div>
+											<div>10 00 00 00 </div>
+											<div>10 00 00 00 </div>
+											<div>10 00 00 00 </div>
+											<div>10 00 00 00 </div>
+											<div>10 00 00 00 </div>
+											<div>10 00 00 00 </div>
+											<div>10 00 00 00 </div>
+											<div>10 00 00 00 </div>
+											<div>10 00 00 00 </div>
+											<div>10 00 00 00 </div>
+											<div>10 00 00 00 </div>
+											<div>10 00 00 00 </div>
+											<div>10 00 00 00 </div>
+											<div>10 00 00 00 </div>
+											<div>10 00 00 00 </div>
+											<div>10 00 00 00 </div>
+											<div>10 00 00 00 </div>
+											<div>10 00 00 00 </div>
+											<div>10 00 00 00 </div>
+											<div>10 00 00 00 </div>
+											<div>10 00 00 00 </div>
+											<div>10 00 00 00 </div>
+											<div>10 00 00 00 </div>
+											<div>10 00 00 00 </div>
+											<div>10 00 00 00 </div>
+											<div>10 00 00 00 </div>
+											<div>10 00 00 00 </div>
+											<div>10 00 00 00 </div>
+											<div>10 00 00 00 </div>
+											<div>10 00 00 00 </div>
+											<div>10 00 00 00 </div>
+											<div>10 00 00 00 </div>
+											<div>10 00 00 00 </div>
+											<div>10 00 00 00 </div>
+											<div>10 00 00 00 </div>
+                                            <div>10 00 00 00 </div>
+											<div>10 00 00 00 </div>
 										</div>
 									</div>
 								</div>
-								<div class="col-lg-7 col-md-7 col-sm-7 col-xs-7">
+								<div class="col-lg-7 col-md-7 col-sm-7 col-xs-7" style="width:486px">
 									<div class="well well-sm">
 										<div id="state-label-container" style="display:inline-block">
 											<b>INPUT&nbsp;&nbsp;:</b> 
-											<b>IP&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:</b> 
-											<b>Round00:</b> 
-											<b>Round01:</b> 
-											<b>Round02:</b> 
-											<b>Round03:</b> 
-											<b>Round04:</b> 
-											<b>Round05:</b> 
-											<b>Round06:</b> 
-											<b>Round07:</b> 
-											<b>Round08:</b> 
-											<b>Round09:</b> 
-											<b>Round10:</b> 
-											<b>Round11:</b> 
-											<b>Round12:</b> 
-											<b>Round13:</b> 
-											<b>Round14:</b> 
-											<b>Round15:</b> 
-											<b>IP_INV :</b> 
-											<b>OUTPUT :</b> 
+											<b>ADDKEY:</b>
+											<b>R0 S_BYTE</b>
+											<b>&nbsp;&nbsp;&nbsp;&nbsp;S_ROWS:</b>
+											<b>&nbsp;&nbsp;&nbsp;&nbsp;M_COL :</b>
+											<b>&nbsp;&nbsp;&nbsp;&nbsp;A_KEY :</b>
+											<b>R01 S_BYTE</b>
+											<b>&nbsp;&nbsp;&nbsp;&nbsp;S_ROWS:</b>
+											<b>&nbsp;&nbsp;&nbsp;&nbsp;M_COL :</b>
+											<b>&nbsp;&nbsp;&nbsp;&nbsp;A_KEY :</b>
+                                            <b>R2 S_BYTE</b>
+											<b>&nbsp;&nbsp;&nbsp;&nbsp;S_ROWS:</b>
+											<b>&nbsp;&nbsp;&nbsp;&nbsp;M_COL :</b>
+											<b>&nbsp;&nbsp;&nbsp;&nbsp;A_KEY :</b>
+                                            <b>R3 S_BYTE</b>
+											<b>&nbsp;&nbsp;&nbsp;&nbsp;S_ROWS:</b>
+											<b>&nbsp;&nbsp;&nbsp;&nbsp;M_COL :</b>
+											<b>&nbsp;&nbsp;&nbsp;&nbsp;A_KEY :</b>
+                                            <b>R4 S_BYTE</b>
+											<b>&nbsp;&nbsp;&nbsp;&nbsp;S_ROWS:</b>
+											<b>&nbsp;&nbsp;&nbsp;&nbsp;M_COL :</b>
+											<b>&nbsp;&nbsp;&nbsp;&nbsp;A_KEY :</b>
+                                            <b>R5 S_BYTE</b>
+											<b>&nbsp;&nbsp;&nbsp;&nbsp;S_ROWS:</b>
+											<b>&nbsp;&nbsp;&nbsp;&nbsp;M_COL :</b>
+											<b>&nbsp;&nbsp;&nbsp;&nbsp;A_KEY :</b>
+                                            <b>R6 S_BYTE</b>
+											<b>&nbsp;&nbsp;&nbsp;&nbsp;S_ROWS:</b>
+											<b>&nbsp;&nbsp;&nbsp;&nbsp;M_COL :</b>
+											<b>&nbsp;&nbsp;&nbsp;&nbsp;A_KEY :</b>
+                                            <b>R7 S_BYTE</b>
+											<b>&nbsp;&nbsp;&nbsp;&nbsp;S_ROWS:</b>
+											<b>&nbsp;&nbsp;&nbsp;&nbsp;M_COL :</b>
+											<b>&nbsp;&nbsp;&nbsp;&nbsp;A_KEY :</b>
+                                            <b>R8 S_BYTE</b>
+											<b>&nbsp;&nbsp;&nbsp;&nbsp;S_ROWS:</b>
+											<b>&nbsp;&nbsp;&nbsp;&nbsp;M_COL :</b>
+											<b>&nbsp;&nbsp;&nbsp;&nbsp;A_KEY :</b>
+                                            <b>R9 S_BYTE</b>
+											<b>&nbsp;&nbsp;&nbsp;&nbsp;S_ROWS:</b>
+											<b>&nbsp;&nbsp;&nbsp;&nbsp;A_KEY :</b>
+											<b>OUTPUT :</b>
 										</div>
 										<div id="state-container" style="display:inline-block">
-											<div>10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
+											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
 										</div>
 									</div>
 								</div>
 							</div>
 						</div> <!-- panel body -->
-					</div> <!-- panel -->
-					<div class="panel panel-default">
-						<div class="panel-heading">FILE ENCRIPTING</div>
-						<div class="panel-body">
-							<form id="file-form" class="form-inline" data-toggle="validator" onsubmit="return false">
-								<div class="row">
-									<div class="col-lg-7 col-md-7 col-sm-7 col-xs-7">
-										<div class="form-group mb10">
-											<label for="open-path">IN</label>
-											<div class="input-group">
-												<input type="text" class="form-control" id="open-path"
-                                                       required placeholder="file path">
-												<span class="input-group-btn">
-													<button class="btn btn-default" type="button" id="open-btn">OPEN</button>
-                                                    <input style="display:none;" id="open-file" type="file" />
-												</span>
-											</div><!-- /input-group -->
-										</div>
-										<div class="form-group">
-											<label for="save-path">OUT</label>
-											<div class="input-group">
-												<input class="form-control" id="save-path"
-                                                       required placeholder="file path">
-												<span class="input-group-btn">
-													<button class="btn btn-default" type="button" id="save-btn">OPEN</button>
-                                                    <input style="display:none;" id="save-file" type="file" nwsaveas  />
-												</span>
-											</div><!-- /input-group -->
-										</div>
-									</div>
-									<div class="col-lg-5 col-md-5 col-sm-5 col-xs-5" style="padding-left:5px">
-										<div class="form-group mb10">
-											<label for="file-key">KEY</label>
-											<input class="form-control" id="file-key" required  pattern="^[0-9a-fA-F]{16}$"
-                                                   placeholder="16 hex" style="width: 170px">
-										</div>
-										<button type="submit" class="btn btn-primary" id="file-encrypt-btn">Encrypt</button>
-										<button type="submit" class="btn btn-primary" id="file-decrypt-btn">Decrypt</button>
-									</div>
-								</div>
-							</form>
-						</div>
-					</div>
+					</div> <!-- panel -->	
 				</div>
-				<div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+				<div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
 					<div class="row">
 						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
 							<div class="panel panel-default">
-								<div class="panel-heading">F(R, K) COMPUTING</div>
 								<div class="panel-body">
 									<form id="F-form">
 										<div class="form-group">
@@ -278,7 +286,6 @@
 								</div>
 							</div>
 							<div class="panel panel-default">
-								<div class="panel-heading">E(R) COMPUTING</div>
 								<div class="panel-body">
 									<form id="E-form">
 										<div class="form-group">
@@ -296,7 +303,6 @@
 						</div>
 						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
 							<div class="panel panel-default">
-								<div class="panel-heading">XOR COMPUTING</div>
 								<div class="panel-body">
 									<form id="XOR-form">
 										<div class="form-group">
@@ -312,35 +318,76 @@
 											<input class="form-control" id="xor-result" name="result" readonly>
 										</div>
 										<button type="submit" class="btn btn-default">Submit</button>
-                                    </form>
-                                </div>
-                            </div>
-                            <div class="panel panel-default">
-                                <div class="panel-heading">S_BOX COMPUTING</div>
-                                <div class="panel-body">
-                                    <form id="SBOX-form">
-                                        <div class="form-group">
-                                            <label for="sbox-input">INPUT</label>
-                                            <input class="form-control" id="sbox-input" name="input">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="sbox-result">RESULT</label>
-                                            <input class="form-control" id="sbox-result" readonly name="result">
-                                        </div>
-                                        <button type="submit" class="btn btn-default">Submit</button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div> <!-- row -->
-        </div> <!-- container -->
-        </div>
-    </body>
+									</form>
+								</div>
+							</div>
+							<div class="panel panel-default">
+								<div class="panel-body">
+									<form id="SBOX-form">
+										<div class="form-group">
+											<label for="sbox-input">INPUT</label>
+											<input class="form-control" id="sbox-input" name="input">
+										</div>
+										<div class="form-group">
+											<label for="sbox-result">RESULT</label>
+											<input class="form-control" id="sbox-result" readonly name="result">
+										</div>
+										<button type="submit" class="btn btn-default">Submit</button>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="panel panel-default">
+						<div class="panel-heading">FILE ENCRIPTING</div>
+						<div class="panel-body">
+							<form id="file-form" class="form-inline" data-toggle="validator" onsubmit="return false">
+								<div class="row">
+									<div class="col-lg-7 col-md-7 col-sm-7 col-xs-7">
+										<div class="form-group mb10">
+											<label for="open-path">IN</label>
+											<div class="input-group">
+												<input type="text" class="form-control" id="open-path"
+																										required placeholder="file path">
+												<span class="input-group-btn">
+													<button class="btn btn-default" type="button" id="open-btn">OPEN</button>
+													<input style="display:none;" id="open-file" type="file" />
+												</span>
+											</div><!-- /input-group -->
+										</div>
+										<div class="form-group">
+											<label for="save-path">OUT</label>
+											<div class="input-group">
+												<input class="form-control" id="save-path"
+																				required placeholder="file path">
+												<span class="input-group-btn">
+													<button class="btn btn-default" type="button" id="save-btn">OPEN</button>
+													<input style="display:none;" id="save-file" type="file" nwsaveas  />
+												</span>
+											</div><!-- /input-group -->
+										</div>
+									</div>
+									<div class="col-lg-5 col-md-5 col-sm-5 col-xs-5" style="padding-left:5px">
+										<div class="form-group mb10">
+											<label for="file-key">KEY</label>
+											<input class="form-control" id="file-key" required  pattern="^[0-9a-fA-F]{16}$"
+																															 placeholder="16 hex" style="width: 170px">
+										</div>
+										<button type="submit" class="btn btn-primary" id="file-encrypt-btn">Encrypt</button>
+										<button type="submit" class="btn btn-primary" id="file-decrypt-btn">Decrypt</button>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div> <!-- row -->
+		</div> <!-- container -->
+		</div>
+	</body>
 
-    <script src="./scripts/jquery.min.js"></script>
-    <script src="./scripts/bootstrap.min.js"></script>
+	<script src="./scripts/jquery.min.js"></script>
+	<script src="./scripts/bootstrap.min.js"></script>
     <script src="./scripts/index.js"></script>
     <script src="./scripts/validator.min.js"></script>
 

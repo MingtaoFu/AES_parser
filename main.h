@@ -1,12 +1,12 @@
 #include <stdint.h>
 # define AES_MAXNR 14
 
-/*
-struct _key_output {
-    uint32_t words[60];
+struct _storage {
+    char words[44][13];
+    char states[50][49];
 };
-typedef struct _key_output key_output;
- */
+typedef struct _storage storage;
+storage sto;
 
 struct aes_key_st {
     uint32_t rd_key[4 * (AES_MAXNR + 1)];
@@ -15,8 +15,10 @@ struct aes_key_st {
 typedef struct aes_key_st AES_KEY;
 
 int AES_set_encrypt_key(const unsigned char *userKey, const int bits, AES_KEY *key);
+int AES_set_encrypt_key2(const unsigned char *userKey, const int bits, AES_KEY *key);
 int AES_set_decrypt_key(const unsigned char *userKey, const int bits, AES_KEY *key);
-void AES_encrypt(const unsigned char *in, unsigned char *out, const AES_KEY *key);
+void AES_encrypt2(const unsigned char *in, unsigned char *out, const AES_KEY *key);
+void AES_encrypt_data2(const unsigned char *in, unsigned char *out, const AES_KEY *key);
 void AES_decrypt(const unsigned char *in, unsigned char *out, const AES_KEY *key);
 
 static const uint32_t rcon[] = {

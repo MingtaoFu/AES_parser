@@ -14,6 +14,7 @@ namespace demo {
 	using v8::Value;
 	using v8::Array;
 	using v8::Function;
+	/*
 
 	void F_computing(const FunctionCallbackInfo<Value>& args) {
 		Isolate* isolate = args.GetIsolate();
@@ -90,6 +91,7 @@ namespace demo {
 			//decrypt_file(in, out);
 		}
 	}
+	*/
 
 	void Method(const FunctionCallbackInfo<Value>& args) {
 		Isolate* isolate = args.GetIsolate();
@@ -101,32 +103,47 @@ namespace demo {
 		char* key = *v8_key;
 		char* plain = *v8_plain;
 
-		init_key(char2bit(key));
+		//init_key(char2bit(key));
+		AES_KEY aes_key;
+		AES_set_encrypt_key2(NULL, NULL, &aes_key);
+		printf("dsaadsada\n");
 
 		if(!strcmp(mode, "-en")) {
-			encrypt_num(plain);
+		//	encrypt_num(plain);
+			const unsigned char paint[] =
+            {0x54, 0x77, 0x6F, 0x20, 0x4F, 0x6E, 0x65,
+             0x20, 0x4E, 0x69, 0x6E, 0x65, 0x20, 0x54, 0x77, 0x6F};
+			unsigned char out[150];
+			AES_encrypt_data2(paint, out, &aes_key);
+
+			for (int i = 0; i < 16; i++) {
+				printf("%x", out[i]);
+			}			/*
+			for (int i = 0; i < 16; i++) {
+				printf("%x", out[i]);
+			}
+			 */
 		} else if (!strcmp(mode, "-dn")) {
-			decrypt_num(plain);
+			//	decrypt_num(plain);
 		}
 
-		//args.GetReturnValue().Set(String::NewFromUtf9(isolate, plain));
-
-		/*
-		Handle<v8::Object > v8Obj = v8::Object::New();
-		v8Obj->Set(String::NewFromUtf8(isolate, "key"), 1);
-		args.GetReturnValue().Set(v8Obj);
-		 */
 
 		Local<Object> v8_storage = Object::New(isolate);
-		Local<Array> v8_storage_keys = Array::New(isolate);
+		Local<Array> v8_storage_words = Array::New(isolate);
 		Local<Array> v8_storage_states = Array::New(isolate);
-		for (int i = 0; i < 16; i++) {
-			v8_storage_keys->Set(i, String::NewFromUtf8(isolate, sto.keys[i]));
+		for (int i = 0; i < 44; i++) {
+			uint32_t word = aes_key.rd_key[i];
+			char w[13];
+			for (int j = 0; j < 4; j++) {
+				sprintf(&w[j*3], "%02x ",  (word >> (j * 8) & 0xff));
+				//printf("%02x ",  (word >> ((3 - j) * 8)) & 0xff);
+			}
+			v8_storage_words->Set(i, String::NewFromUtf8(isolate, w));
 		}
-		for (int i = 0; i < 20; i++) {
+		for (int i = 0; i < 42; i++) {
 			v8_storage_states->Set(i, String::NewFromUtf8(isolate, sto.states[i]));
 		}
-		v8_storage->Set(String::NewFromUtf8(isolate, "keys"), v8_storage_keys);
+		v8_storage->Set(String::NewFromUtf8(isolate, "words"), v8_storage_words);
 		v8_storage->Set(String::NewFromUtf8(isolate, "states"), v8_storage_states);
 		v8_storage->Set(String::NewFromUtf8(isolate, "cipher_text"), String::NewFromUtf8(isolate, plain));
 
@@ -134,12 +151,14 @@ namespace demo {
 	}
 
 	void init(Local<Object> exports) {
-		NODE_SET_METHOD(exports, "DES_data", Method);
+		NODE_SET_METHOD(exports, "AES_data", Method);
+        /*
 		NODE_SET_METHOD(exports, "F_computing", F_computing);
 		NODE_SET_METHOD(exports, "XOR_computing", XOR_computing);
 		NODE_SET_METHOD(exports, "E_computing", E_computing);
 		NODE_SET_METHOD(exports, "SBOX_computing", SBOX_computing);
 		NODE_SET_METHOD(exports, "file_operation", file_operation);
+         */
 	}
 
 	NODE_MODULE(addon, init)
