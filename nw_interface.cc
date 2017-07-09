@@ -14,86 +14,8 @@ namespace demo {
 	using v8::Value;
 	using v8::Array;
 	using v8::Function;
-	/*
 
-	void F_computing(const FunctionCallbackInfo<Value>& args) {
-		Isolate* isolate = args.GetIsolate();
-
-		String::Utf8Value v8_R(args[0]->ToString());
-		String::Utf8Value v8_key(args[1]->ToString());
-        char* R = *v8_R;
-		char* key = *v8_key;
-
-		f_computing(R, key);
-
-		args.GetReturnValue().Set(String::NewFromUtf8(isolate, R));
-	}
-
-	void XOR_computing(const FunctionCallbackInfo<Value>& args) {
-		Isolate* isolate = args.GetIsolate();
-
-		String::Utf8Value v8_a(args[0]->ToString());
-		String::Utf8Value v8_b(args[1]->ToString());
-        char* a = *v8_a;
-		char* b = *v8_b;
-
-		xor_computing(a, b);
-
-		args.GetReturnValue().Set(String::NewFromUtf8(isolate, a));
-	}
-
-	void E_computing(const FunctionCallbackInfo<Value>& args) {
-		Isolate* isolate = args.GetIsolate();
-
-		String::Utf8Value v8_a(args[0]->ToString());
-        char* a = *v8_a;
-		char output[13]; //12 + \0
-
-        e_computing(a, output);
-
-		args.GetReturnValue().Set(String::NewFromUtf8(isolate, output));
-	}
-
-	void SBOX_computing(const FunctionCallbackInfo<Value>& args) {
-		Isolate* isolate = args.GetIsolate();
-
-		String::Utf8Value v8_a(args[0]->ToString());
-        char* a = *v8_a;
-		char output[9]; //8 + \0
-
-        sbox_computing(a, output);
-
-		args.GetReturnValue().Set(String::NewFromUtf8(isolate, output));
-	}
-
-	void file_operation(const FunctionCallbackInfo<Value>& args) {
-		printf("1\n");
-		Isolate* isolate = args.GetIsolate();
-
-		String::Utf8Value v8_mode(args[0]->ToString());
-		String::Utf8Value v8_key(args[1]->ToString());
-		String::Utf8Value v8_in_path(args[2]->ToString());
-		String::Utf8Value v8_out_path(args[3]->ToString());
-		Local<Function> cb = Local<Function>::Cast(args[4]);
-		char* mode = *v8_mode;
-		char* key = *v8_key;
-		char* in = *v8_in_path;
-		char* out = *v8_out_path;
-
-		init_key(char2bit(key));
-
-		if(!strcmp(mode, "-ef")) {
-			encrypt_file(in, out);
-			const unsigned argc = 1;
-			Local<Value> argv[argc] = { String::NewFromUtf8(isolate, in) };
-			cb->Call(Null(isolate), argc, argv);
-		} else if (!strcmp(mode, "-df")) {
-			//decrypt_file(in, out);
-		}
-	}
-	*/
-
-    void char2num(char* input, char* output) {
+	void char2num(char* input, char* output) {
         int i = 0;
         unsigned char ch, ch2;
         while ((ch = input[i]) != '\0') {
@@ -129,9 +51,134 @@ namespace demo {
             output[i / 2] = ch;
             output[i / 2] <<= 4;
             output[i / 2] |= ch2;
-            i+=2;
+            i += 2;
         }
     }
+
+	void addRoundKey_computing(const FunctionCallbackInfo<Value>& args) {
+		Isolate* isolate = args.GetIsolate();
+
+		String::Utf8Value v8_in(args[0]->ToString());
+		String::Utf8Value v8_key(args[1]->ToString());
+        char* _in = *v8_in;
+		char* _key = *v8_key;
+
+		char in[17], key[17];
+		unsigned char out[17];
+		char _out[33];
+
+		char2num(_in, in);
+		char2num(_key, key);
+
+        addRoundKey(reinterpret_cast<const unsigned char*>(in), reinterpret_cast<unsigned char*>(key), reinterpret_cast<unsigned char*>(out));
+
+        for (int i = 0; i < 16; i++) {
+			sprintf(&_out[i*2], "%02x", out[i]);
+		}
+
+		args.GetReturnValue().Set(String::NewFromUtf8(isolate, _out));
+	}
+
+	void shiftRows_computing(const FunctionCallbackInfo<Value>& args) {
+		printf("aaa\n");
+		Isolate* isolate = args.GetIsolate();
+
+		String::Utf8Value v8_in(args[0]->ToString());
+        char* _in = *v8_in;
+
+		char in[17];
+		unsigned char out[17];
+		char _out[33];
+
+		char2num(_in, in);
+
+        shiftRows(reinterpret_cast<const unsigned char*>(in), reinterpret_cast<unsigned char*>(out));
+		printf("%x\n", out);
+
+		for (int i = 0; i < 16; i++) {
+			sprintf(&_out[i*2], "%02x", out[i]);
+		}
+
+		args.GetReturnValue().Set(String::NewFromUtf8(isolate, _out));
+	}
+
+	void mixColumns_computing(const FunctionCallbackInfo<Value>& args) {
+		Isolate* isolate = args.GetIsolate();
+
+		String::Utf8Value v8_in(args[0]->ToString());
+        char* _in = *v8_in;
+
+		char in[17];
+		unsigned char out[17];
+		char _out[33];
+
+		char2num(_in, in);
+
+		mixColumns(reinterpret_cast<const unsigned char*>(in), reinterpret_cast<unsigned char*>(out));
+
+		for (int i = 0; i < 16; i++) {
+			sprintf(&_out[i*2], "%02x", out[i]);
+		}
+
+		args.GetReturnValue().Set(String::NewFromUtf8(isolate, _out));
+	}
+
+	void subBytes_computing(const FunctionCallbackInfo<Value>& args) {
+		Isolate* isolate = args.GetIsolate();
+
+		String::Utf8Value v8_in(args[0]->ToString());
+		char* _in = *v8_in;
+
+		char in[17];
+		unsigned char out[17];
+		char _out[33];
+
+		char2num(_in, in);
+
+		subBytes(reinterpret_cast<const unsigned char*>(in), reinterpret_cast<unsigned char*>(out));
+
+		for (int i = 0; i < 16; i++) {
+			sprintf(&_out[i*2], "%02x", out[i]);
+		}
+
+		args.GetReturnValue().Set(String::NewFromUtf8(isolate, _out));
+	}
+
+	void file_operation(const FunctionCallbackInfo<Value>& args) {
+		Isolate* isolate = args.GetIsolate();
+
+		String::Utf8Value v8_mode(args[0]->ToString());
+		String::Utf8Value v8_key(args[1]->ToString());
+		String::Utf8Value v8_in_path(args[2]->ToString());
+		String::Utf8Value v8_out_path(args[3]->ToString());
+		Local<Function> cb = Local<Function>::Cast(args[4]);
+		char* mode = *v8_mode;
+		char* key = *v8_key;
+		char* in = *v8_in_path;
+		char* out = *v8_out_path;
+
+		char key_file[17];
+		char2num(key, key_file);
+
+        AES_KEY aes_key;
+
+		args.GetReturnValue().Set(String::NewFromUtf8(isolate, ""));
+
+        char result[30] = "";
+		if(!strcmp(mode, "-ef")) {
+			AES_set_encrypt_key2(reinterpret_cast<const unsigned char*>(key_file), NULL, &aes_key);
+			encrypt_file(in, out, &aes_key, result);
+			const unsigned argc = 1;
+			Local<Value> argv[argc] = { String::NewFromUtf8(isolate, result) };
+			cb->Call(Null(isolate), argc, argv);
+		} else if (!strcmp(mode, "-df")) {
+			AES_set_decrypt_key2_test(reinterpret_cast<const unsigned char*>(key_file), NULL, &aes_key);
+			decrypt_file(in, out, &aes_key, result);
+			const unsigned argc = 1;
+			Local<Value> argv[argc] = { String::NewFromUtf8(isolate, result) };
+			cb->Call(Null(isolate), argc, argv);
+		}
+	}
 
     void Method(const FunctionCallbackInfo<Value>& args) {
 		Isolate* isolate = args.GetIsolate();
@@ -145,24 +192,27 @@ namespace demo {
 
         char key_num[17];
         char plain_num[17];
+		unsigned char out[17];
+		char _out[33];
         char2num(key, key_num);
         char2num(plain, plain_num);
 
 		//init_key(char2bit(key));
 		AES_KEY aes_key;
 
-
-        unsigned char out[150];
 		if(!strcmp(mode, "-en")) {
             AES_set_encrypt_key2(reinterpret_cast<const unsigned char*>(key_num), NULL, &aes_key);
-			AES_encrypt_data2(reinterpret_cast<const unsigned char*>(plain_num), out, &aes_key);
+			AES_encrypt_data(reinterpret_cast<const unsigned char*>(plain_num), reinterpret_cast<unsigned char*>(out), &aes_key);
 		} else if (!strcmp(mode, "-dn")) {
-            printf("sadsadsadsadsa\n");
             AES_set_decrypt_key2_test(reinterpret_cast<const unsigned char*>(key_num), NULL, &aes_key);
-            AES_decrypt_data2(reinterpret_cast<const unsigned char*>(plain_num), out, &aes_key);
+            AES_decrypt_data(reinterpret_cast<const unsigned char*>(plain_num), reinterpret_cast<unsigned char*>(out), &aes_key);
 		} else {
             return;
         }
+
+		for (int i = 0; i < 16; i++) {
+			sprintf(&_out[i*2], "%02x", out[i]);
+		}
 
 		Local<Object> v8_storage = Object::New(isolate);
 		Local<Array> v8_storage_words = Array::New(isolate);
@@ -172,29 +222,26 @@ namespace demo {
 			char w[13];
 			for (int j = 0; j < 4; j++) {
 				sprintf(&w[j*3], "%02x ",  (word >> (j * 8) & 0xff));
-				//printf("%02x ",  (word >> ((3 - j) * 8)) & 0xff);
 			}
 			v8_storage_words->Set(i, String::NewFromUtf8(isolate, w));
 		}
-		for (int i = 0; i < 42; i++) {
+		for (int i = 0; i < 52; i++) {
 			v8_storage_states->Set(i, String::NewFromUtf8(isolate, sto.states[i]));
 		}
 		v8_storage->Set(String::NewFromUtf8(isolate, "words"), v8_storage_words);
 		v8_storage->Set(String::NewFromUtf8(isolate, "states"), v8_storage_states);
-		v8_storage->Set(String::NewFromUtf8(isolate, "cipher_text"), String::NewFromUtf8(isolate, plain));
+		v8_storage->Set(String::NewFromUtf8(isolate, "cipher_text"), String::NewFromUtf8(isolate, _out));
 
 		args.GetReturnValue().Set(v8_storage);
 	}
 
 	void init(Local<Object> exports) {
 		NODE_SET_METHOD(exports, "AES_data", Method);
-        /*
-		NODE_SET_METHOD(exports, "F_computing", F_computing);
-		NODE_SET_METHOD(exports, "XOR_computing", XOR_computing);
-		NODE_SET_METHOD(exports, "E_computing", E_computing);
-		NODE_SET_METHOD(exports, "SBOX_computing", SBOX_computing);
+		NODE_SET_METHOD(exports, "addRoundKey_computing", addRoundKey_computing);
+        NODE_SET_METHOD(exports, "shiftRows_computing", shiftRows_computing);
+        NODE_SET_METHOD(exports, "mixColumns_computing", mixColumns_computing);
+        NODE_SET_METHOD(exports, "subBytes_computing", subBytes_computing);
 		NODE_SET_METHOD(exports, "file_operation", file_operation);
-         */
 	}
 
 	NODE_MODULE(addon, init)

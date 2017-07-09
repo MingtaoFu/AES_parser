@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Hello World!</title>
+		<title>AES</title>
+        <meta charset="utf-8">
 		<link rel="stylesheet" href="./styles/bootstrap.min.css">
 		<!--<link rel="stylesheet" href="./styles/bootstrap-theme.min.css">-->
 		<style>
@@ -15,6 +16,8 @@
 			.well {
 				line-height: 13px;
 				font-size: 12px;
+				height: 590px;
+				overflow: auto;
 			}
 			* {
 				font-family:monaco, monospace;
@@ -43,26 +46,28 @@
 			<div class="row">
 				<div class="col-lg-7 col-md-7 col-sm-12 col-xs-12">
 					<div class="panel panel-primary">
-						<div class="panel-heading">DATA ENCRIPTING</div>
+						<div class="panel-heading">DATA ENCRYPTING</div>
 						<div class="panel-body">
 							<form class="form-inline" data-toggle="validator" onsubmit="return false">
 								<div class="row">
 									<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
 										<div class="form-group mb10">
 											<label for="data-input">IN</label>
-											<input pattern="^[0-9a-fA-F]{32}$" value="54776F204F6E65204E696E652054776F" required
-												   class="form-control" id="data-input" placeholder="32 hex">
+											<input pattern="^[0-9a-fA-F]{32}$" value="00112233445566778899aabbccddeeff" required
+												   class="form-control input-data" id="data-input" placeholder="32 hex"
+												   style="width:245px">
 										</div>
 										<div class="form-group">
 											<label for="data-output">OUT</label>
-											<input type="text" class="form-control" id="data-output" readonly>
+											<input type="text" class="form-control" id="data-output" readonly style="width:245px">
 										</div>
 									</div>
 									<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
 										<div class="form-group mb10">
 											<label for="data-key">KEY</label>
-											<input class="form-control" pattern="^[0-9a-fA-F]{32}$" required
-												   id="data-key" placeholder="32 hex" value="5468617473206D79204B756E67204675">
+											<input class="form-control input-data" pattern="^[0-9a-fA-F]{32}$" required
+												   id="data-key" placeholder="32 hex" value="000102030405060708090a0b0c0d0e0f"
+												   style="width:245px">
 										</div>
 										<button type="submit" class="btn btn-primary" id="data-encrypt-btn">Encrypt</button>
 										<button type="submit" class="btn btn-primary" id="data-decrypt-btn">Decrypt</button>
@@ -120,142 +125,162 @@
                                             <b>43:</b>
 										</div>
 										<div id="keys-container" class="" style="display:inline-block;">
-											<div>12 34 56 78 </div>
-											<div>12 34 56 78 </div>
-											<div>12 34 56 78 </div>
-											<div>12 34 56 78 </div>
-											<div>10 00 00 00 </div>
-											<div>10 00 00 00 </div>
-											<div>10 00 00 00 </div>
-											<div>10 00 00 00 </div>
-											<div>10 00 00 00 </div>
-											<div>10 00 00 00 </div>
-											<div>10 00 00 00 </div>
-											<div>10 00 00 00 </div>
-											<div>10 00 00 00 </div>
-											<div>10 00 00 00 </div>
-											<div>10 00 00 00 </div>
-											<div>10 00 00 00 </div>
-											<div>10 00 00 00 </div>
-											<div>10 00 00 00 </div>
-											<div>10 00 00 00 </div>
-											<div>10 00 00 00 </div>
-											<div>10 00 00 00 </div>
-											<div>10 00 00 00 </div>
-											<div>10 00 00 00 </div>
-											<div>10 00 00 00 </div>
-											<div>10 00 00 00 </div>
-											<div>10 00 00 00 </div>
-											<div>10 00 00 00 </div>
-											<div>10 00 00 00 </div>
-											<div>10 00 00 00 </div>
-											<div>10 00 00 00 </div>
-											<div>10 00 00 00 </div>
-											<div>10 00 00 00 </div>
-											<div>10 00 00 00 </div>
-											<div>10 00 00 00 </div>
-											<div>10 00 00 00 </div>
-											<div>10 00 00 00 </div>
-											<div>10 00 00 00 </div>
-											<div>10 00 00 00 </div>
-											<div>10 00 00 00 </div>
-											<div>10 00 00 00 </div>
-											<div>10 00 00 00 </div>
-											<div>10 00 00 00 </div>
-                                            <div>10 00 00 00 </div>
-											<div>10 00 00 00 </div>
+											<div>00 01 02 03</div>
+											<div>04 05 06 07</div>
+											<div>08 09 0a 0b</div>
+											<div>0c 0d 0e 0f</div>
+											<div>d6 aa 74 fd</div>
+											<div>d2 af 72 fa</div>
+											<div>da a6 78 f1</div>
+											<div>d6 ab 76 fe</div>
+											<div>b6 92 cf 0b</div>
+											<div>64 3d bd f1</div>
+											<div>be 9b c5 00</div>
+											<div>68 30 b3 fe</div>
+											<div>b6 ff 74 4e</div>
+											<div>d2 c2 c9 bf</div>
+											<div>6c 59 0c bf</div>
+											<div>04 69 bf 41</div>
+											<div>47 f7 f7 bc</div>
+											<div>95 35 3e 03</div>
+											<div>f9 6c 32 bc</div>
+											<div>fd 05 8d fd</div>
+											<div>3c aa a3 e8</div>
+											<div>a9 9f 9d eb</div>
+											<div>50 f3 af 57</div>
+											<div>ad f6 22 aa</div>
+											<div>5e 39 0f 7d</div>
+											<div>f7 a6 92 96</div>
+											<div>a7 55 3d c1</div>
+											<div>0a a3 1f 6b</div>
+											<div>14 f9 70 1a</div>
+											<div>e3 5f e2 8c</div>
+											<div>44 0a df 4d</div>
+											<div>4e a9 c0 26</div>
+											<div>47 43 87 35</div>
+											<div>a4 1c 65 b9</div>
+											<div>e0 16 ba f4</div>
+											<div>ae bf 7a d2</div>
+											<div>54 99 32 d1</div>
+											<div>f0 85 57 68</div>
+											<div>10 93 ed 9c</div>
+											<div>be 2c 97 4e</div>
+											<div>13 11 1d 7f</div>
+											<div>e3 94 4a 17</div>
+                                            <div>f3 07 a7 8b</div>
+											<div>4d 2b 30 c5</div>
 										</div>
 									</div>
 								</div>
 								<div class="col-lg-7 col-md-7 col-sm-7 col-xs-7" style="width:486px">
 									<div class="well well-sm">
 										<div id="state-label-container" style="display:inline-block">
-											<b>&nbsp;&nbsp;&nbsp;INPUT :</b>
-											<b>&nbsp;&nbsp;&nbsp;A_KEY :</b>
-											<b>R0 S_BYTE:</b>
-											<b>&nbsp;&nbsp;&nbsp;S_ROWS:</b>
-											<b>&nbsp;&nbsp;&nbsp;M_COL :</b>
-											<b>&nbsp;&nbsp;&nbsp;A_KEY :</b>
-											<b>R1 S_BYTE:</b>
-											<b>&nbsp;&nbsp;&nbsp;S_ROWS:</b>
-											<b>&nbsp;&nbsp;&nbsp;M_COL :</b>
-											<b>&nbsp;&nbsp;&nbsp;A_KEY :</b>
-                                            <b>R2 S_BYTE:</b>
-											<b>&nbsp;&nbsp;&nbsp;S_ROWS:</b>
-											<b>&nbsp;&nbsp;&nbsp;M_COL :</b>
-											<b>&nbsp;&nbsp;&nbsp;A_KEY :</b>
-                                            <b>R3 S_BYTE:</b>
-											<b>&nbsp;&nbsp;&nbsp;S_ROWS:</b>
-											<b>&nbsp;&nbsp;&nbsp;M_COL :</b>
-											<b>&nbsp;&nbsp;&nbsp;A_KEY :</b>
-                                            <b>R4 S_BYTE:</b>
-											<b>&nbsp;&nbsp;&nbsp;S_ROWS:</b>
-											<b>&nbsp;&nbsp;&nbsp;M_COL :</b>
-											<b>&nbsp;&nbsp;&nbsp;A_KEY :</b>
-                                            <b>R5 S_BYTE:</b>
-											<b>&nbsp;&nbsp;&nbsp;S_ROWS:</b>
-											<b>&nbsp;&nbsp;&nbsp;M_COL :</b>
-											<b>&nbsp;&nbsp;&nbsp;A_KEY :</b>
-                                            <b>R6 S_BYTE:</b>
-											<b>&nbsp;&nbsp;&nbsp;S_ROWS:</b>
-											<b>&nbsp;&nbsp;&nbsp;M_COL :</b>
-											<b>&nbsp;&nbsp;&nbsp;A_KEY :</b>
-                                            <b>R7 S_BYTE:</b>
-											<b>&nbsp;&nbsp;&nbsp;S_ROWS:</b>
-											<b>&nbsp;&nbsp;&nbsp;M_COL :</b>
-											<b>&nbsp;&nbsp;&nbsp;A_KEY :</b>
-                                            <b>R8 S_BYTE:</b>
-											<b>&nbsp;&nbsp;&nbsp;S_ROWS:</b>
-											<b>&nbsp;&nbsp;&nbsp;M_COL :</b>
-											<b>&nbsp;&nbsp;&nbsp;A_KEY :</b>
-                                            <b>R9 S_BYTE:</b>
-											<b>&nbsp;&nbsp;&nbsp;S_ROWS:</b>
-											<b>&nbsp;&nbsp;&nbsp;A_KEY :</b>
-											<b>&nbsp;&nbsp;&nbsp;OUTPUT:</b>
+											<b>R0 input:</b>
+											<b>&nbsp;&nbsp;&nbsp;k_sch:</b>
+											<b>R1 start:</b>
+											<b>&nbsp;&nbsp;&nbsp;s_box:</b>
+											<b>&nbsp;&nbsp;&nbsp;s_row:</b>
+											<b>&nbsp;&nbsp;&nbsp;m_col:</b>
+											<b>&nbsp;&nbsp;&nbsp;k_sch:</b>
+                                            <b>R2 start:</b>
+											<b>&nbsp;&nbsp;&nbsp;s_box:</b>
+											<b>&nbsp;&nbsp;&nbsp;s_row:</b>
+											<b>&nbsp;&nbsp;&nbsp;m_col:</b>
+											<b>&nbsp;&nbsp;&nbsp;k_sch:</b>
+                                            <b>R3 start:</b>
+											<b>&nbsp;&nbsp;&nbsp;s_box:</b>
+											<b>&nbsp;&nbsp;&nbsp;s_row:</b>
+											<b>&nbsp;&nbsp;&nbsp;m_col:</b>
+											<b>&nbsp;&nbsp;&nbsp;k_sch:</b>
+                                            <b>R4 start:</b>
+											<b>&nbsp;&nbsp;&nbsp;s_box:</b>
+											<b>&nbsp;&nbsp;&nbsp;s_row:</b>
+											<b>&nbsp;&nbsp;&nbsp;m_col:</b>
+											<b>&nbsp;&nbsp;&nbsp;k_sch:</b>
+                                            <b>R5 start:</b>
+											<b>&nbsp;&nbsp;&nbsp;s_box:</b>
+											<b>&nbsp;&nbsp;&nbsp;s_row:</b>
+											<b>&nbsp;&nbsp;&nbsp;m_col:</b>
+											<b>&nbsp;&nbsp;&nbsp;k_sch:</b>
+                                            <b>R6 start:</b>
+											<b>&nbsp;&nbsp;&nbsp;s_box:</b>
+											<b>&nbsp;&nbsp;&nbsp;s_row:</b>
+											<b>&nbsp;&nbsp;&nbsp;m_col:</b>
+											<b>&nbsp;&nbsp;&nbsp;k_sch:</b>
+                                            <b>R7 start:</b>
+											<b>&nbsp;&nbsp;&nbsp;s_box:</b>
+											<b>&nbsp;&nbsp;&nbsp;s_row:</b>
+											<b>&nbsp;&nbsp;&nbsp;m_col:</b>
+											<b>&nbsp;&nbsp;&nbsp;k_sch:</b>
+                                            <b>R8 start:</b>
+											<b>&nbsp;&nbsp;&nbsp;s_box:</b>
+											<b>&nbsp;&nbsp;&nbsp;s_row:</b>
+											<b>&nbsp;&nbsp;&nbsp;m_col:</b>
+											<b>&nbsp;&nbsp;&nbsp;k_sch:</b>
+                                            <b>R9 start:</b>
+											<b>&nbsp;&nbsp;&nbsp;s_box:</b>
+											<b>&nbsp;&nbsp;&nbsp;s_row:</b>
+											<b>&nbsp;&nbsp;&nbsp;m_col:</b>
+											<b>&nbsp;&nbsp;&nbsp;k_sch:</b>
+											<b>RA start:</b>
+											<b>&nbsp;&nbsp;&nbsp;s_box:</b>
+											<b>&nbsp;&nbsp;&nbsp;s_row:</b>
+											<b>&nbsp;&nbsp;&nbsp;k_sch:</b>
+											<b>&nbsp;&nbsp;&nbsp;out:</b>
 										</div>
 										<div id="state-container" style="display:inline-block">
-											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
-											<div>10 00 00 00 00 00 00 00 10 00 00 00 00 00 00 00</div>
+											<div>00 11 22 33 44 55 66 77 88 99 aa bb cc dd ee ff</div>
+											<div>00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f</div>
+											<div>00 10 20 30 40 50 60 70 80 90 a0 b0 c0 d0 e0 f0</div>
+											<div>63 ca b7 04 09 53 d0 51 cd 60 e0 e7 ba 70 e1 8c</div>
+											<div>63 53 e0 8c 09 60 e1 04 cd 70 b7 51 ba ca d0 e7</div>
+											<div>5f 72 64 15 57 f5 bc 92 f7 be 3b 29 1d b9 f9 1a</div>
+											<div>d6 aa 74 fd d2 af 72 fa da a6 78 f1 d6 ab 76 fe</div>
+											<div>89 d8 10 e8 85 5a ce 68 2d 18 43 d8 cb 12 8f e4</div>
+											<div>a7 61 ca 9b 97 be 8b 45 d8 ad 1a 61 1f c9 73 69</div>
+											<div>a7 be 1a 69 97 ad 73 9b d8 c9 ca 45 1f 61 8b 61</div>
+											<div>ff 87 96 84 31 d8 6a 51 64 51 51 fa 77 3a d0 09</div>
+											<div>b6 92 cf 0b 64 3d bd f1 be 9b c5 00 68 30 b3 fe</div>
+											<div>49 15 59 8f 55 e5 d7 a0 da ca 94 fa 1f 0a 63 f7</div>
+											<div>3b 59 cb 73 fc d9 0e e0 57 74 22 2d c0 67 fb 68</div>
+											<div>3b d9 22 68 fc 74 fb 73 57 67 cb e0 c0 59 0e 2d</div>
+											<div>4c 9c 1e 66 f7 71 f0 76 2c 3f 86 8e 53 4d f2 56</div>
+											<div>b6 ff 74 4e d2 c2 c9 bf 6c 59 0c bf 04 69 bf 41</div>
+											<div>fa 63 6a 28 25 b3 39 c9 40 66 8a 31 57 24 4d 17</div>
+											<div>2d fb 02 34 3f 6d 12 dd 09 33 7e c7 5b 36 e3 f0</div>
+											<div>2d 6d 7e f0 3f 33 e3 34 09 36 02 dd 5b fb 12 c7</div>
+											<div>63 85 b7 9f fc 53 8d f9 97 be 47 8e 75 47 d6 91</div>
+											<div>47 f7 f7 bc 95 35 3e 03 f9 6c 32 bc fd 05 8d fd</div>
+											<div>24 72 40 23 69 66 b3 fa 6e d2 75 32 88 42 5b 6c</div>
+											<div>36 40 09 26 f9 33 6d 2d 9f b5 9d 23 c4 2c 39 50</div>
+											<div>36 33 9d 50 f9 b5 39 26 9f 2c 09 2d c4 40 6d 23</div>
+											<div>f4 bc d4 54 32 e5 54 d0 75 f1 d6 c5 1d d0 3b 3c</div>
+											<div>3c aa a3 e8 a9 9f 9d eb 50 f3 af 57 ad f6 22 aa</div>
+											<div>c8 16 77 bc 9b 7a c9 3b 25 02 79 92 b0 26 19 96</div>
+											<div>e8 47 f5 65 14 da dd e2 3f 77 b6 4f e7 f7 d4 90</div>
+											<div>e8 da b6 90 14 77 d4 65 3f f7 f5 e2 e7 47 dd 4f</div>
+											<div>98 16 ee 74 00 f8 7f 55 6b 2c 04 9c 8e 5a d0 36</div>
+											<div>5e 39 0f 7d f7 a6 92 96 a7 55 3d c1 0a a3 1f 6b</div>
+											<div>c6 2f e1 09 f7 5e ed c3 cc 79 39 5d 84 f9 cf 5d</div>
+											<div>b4 15 f8 01 68 58 55 2e 4b b6 12 4c 5f 99 8a 4c</div>
+											<div>b4 58 12 4c 68 b6 8a 01 4b 99 f8 2e 5f 15 55 4c</div>
+											<div>c5 7e 1c 15 9a 9b d2 86 f0 5f 4b e0 98 c6 34 39</div>
+											<div>14 f9 70 1a e3 5f e2 8c 44 0a df 4d 4e a9 c0 26</div>
+											<div>d1 87 6c 0f 79 c4 30 0a b4 55 94 ad d6 6f f4 1f</div>
+											<div>3e 17 50 76 b6 1c 04 67 8d fc 22 95 f6 a8 bf c0</div>
+											<div>3e 1c 22 c0 b6 fc bf 76 8d a8 50 67 f6 17 04 95</div>
+											<div>ba a0 3d e7 a1 f9 b5 6e d5 51 2c ba 5f 41 4d 23</div>
+											<div>47 43 87 35 a4 1c 65 b9 e0 16 ba f4 ae bf 7a d2</div>
+											<div>fd e3 ba d2 05 e5 d0 d7 35 47 96 4e f1 fe 37 f1</div>
+											<div>54 11 f4 b5 6b d9 70 0e 96 a0 90 2f a1 bb 9a a1</div>
+											<div>54 d9 90 a1 6b a0 9a b5 96 bb f4 0e a1 11 70 2f</div>
+											<div>e9 f7 4e ec 02 30 20 f6 1b f2 cc f2 35 3c 21 c7</div>
+											<div>54 99 32 d1 f0 85 57 68 10 93 ed 9c be 2c 97 4e</div>
+											<div>bd 6e 7c 3d f2 b5 77 9e 0b 61 21 6e 8b 10 b6 89</div>
+											<div>7a 9f 10 27 89 d5 f5 0b 2b ef fd 9f 3d ca 4e a7</div>
+											<div>7a d5 fd a7 89 ef 4e 27 2b ca 10 0b 3d 9f f5 9f</div>
+											<div>13 11 1d 7f e3 94 4a 17 f3 07 a7 8b 4d 2b 30 c5</div>
+											<div>69 c4 e0 d8 6a 7b 04 30 d8 cd b7 80 70 b4 c5 5a</div>
 										</div>
 									</div>
 								</div>
@@ -264,82 +289,8 @@
 					</div> <!-- panel -->	
 				</div>
 				<div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
-					<div class="row">
-						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-							<div class="panel panel-default">
-								<div class="panel-body">
-									<form id="F-form">
-										<div class="form-group">
-											<label for="f-R">R</label>
-											<input class="form-control" id="f-R" placeholder="8 hex" name="R">
-										</div>
-										<div class="form-group">
-											<label for="f-K">K</label>
-											<input class="form-control" id="f-K" placeholder="12 hex" name="K">
-										</div>
-										<div class="form-group">
-											<label for="f-result">RESULT</label>
-											<input class="form-control" id="f-result" name="result" readonly>
-										</div>
-										<button type="submit" class="btn btn-default">Submit</button>
-									</form>
-								</div>
-							</div>
-							<div class="panel panel-default">
-								<div class="panel-body">
-									<form id="E-form">
-										<div class="form-group">
-											<label for="e-r">R</label>
-											<input class="form-control" id="e-r" name="r" placeholder="8 hex">
-										</div>
-										<div class="form-group">
-											<label for="e-result">RESULT</label>
-											<input class="form-control" id="e-result" name="result" readonly>
-										</div>
-										<button type="submit" class="btn btn-default">Submit</button>
-									</form>
-								</div>
-							</div>
-						</div>
-						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-							<div class="panel panel-default">
-								<div class="panel-body">
-									<form id="XOR-form">
-										<div class="form-group">
-											<label for="xor-1">PARAM 1</label>
-											<input class="form-control" id="xor-1" name="param1" placeholder="8 hex">
-										</div>
-										<div class="form-group">
-											<label for="xor-2">PARAM 2</label>
-											<input class="form-control" id="xor-2" name="param2" placeholder="8 hex">
-										</div>
-										<div class="form-group">
-											<label for="xor-result">RESULT</label>
-											<input class="form-control" id="xor-result" name="result" readonly>
-										</div>
-										<button type="submit" class="btn btn-default">Submit</button>
-									</form>
-								</div>
-							</div>
-							<div class="panel panel-default">
-								<div class="panel-body">
-									<form id="SBOX-form">
-										<div class="form-group">
-											<label for="sbox-input">INPUT</label>
-											<input class="form-control" id="sbox-input" name="input">
-										</div>
-										<div class="form-group">
-											<label for="sbox-result">RESULT</label>
-											<input class="form-control" id="sbox-result" readonly name="result">
-										</div>
-										<button type="submit" class="btn btn-default">Submit</button>
-									</form>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="panel panel-default">
-						<div class="panel-heading">FILE ENCRIPTING</div>
+                    <div class="panel panel-primary">
+						<div class="panel-heading">FILE ENCRYPTING</div>
 						<div class="panel-body">
 							<form id="file-form" class="form-inline" data-toggle="validator" onsubmit="return false">
 								<div class="row">
@@ -348,7 +299,7 @@
 											<label for="open-path">IN</label>
 											<div class="input-group">
 												<input type="text" class="form-control" id="open-path"
-																										required placeholder="file path">
+													   required placeholder="file path">
 												<span class="input-group-btn">
 													<button class="btn btn-default" type="button" id="open-btn">OPEN</button>
 													<input style="display:none;" id="open-file" type="file" />
@@ -359,7 +310,7 @@
 											<label for="save-path">OUT</label>
 											<div class="input-group">
 												<input class="form-control" id="save-path"
-																				required placeholder="file path">
+													   required placeholder="file path">
 												<span class="input-group-btn">
 													<button class="btn btn-default" type="button" id="save-btn">OPEN</button>
 													<input style="display:none;" id="save-file" type="file" nwsaveas  />
@@ -370,16 +321,94 @@
 									<div class="col-lg-5 col-md-5 col-sm-5 col-xs-5" style="padding-left:5px">
 										<div class="form-group mb10">
 											<label for="file-key">KEY</label>
-											<input class="form-control" id="file-key" required  pattern="^[0-9a-fA-F]{16}$"
-																															 placeholder="16 hex" style="width: 170px">
+											<input class="form-control" id="file-key" required  pattern="^[0-9a-fA-F]{32}$"
+												   placeholder="32 hex" style="width: 170px">
 										</div>
-										<button type="submit" class="btn btn-primary" id="file-encrypt-btn">Encrypt</button>
-										<button type="submit" class="btn btn-primary" id="file-decrypt-btn">Decrypt</button>
+                                        <label style="display:block">&nbsp;</label>
+										<button type="submit" class="btn btn-primary" style="width:79px" id="file-encrypt-btn">Encrypt</button>
+										<button type="submit" class="btn btn-primary" style="width:79px" id="file-decrypt-btn">Decrypt</button>
 									</div>
 								</div>
 							</form>
 						</div>
 					</div>
+					<div class="row">
+						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+
+							<div class="panel panel-default">
+								<div class="panel-body">
+									<form id="ShiftRows-form"  data-toggle="validator">
+										<div class="form-group">
+											<label for="ShiftRows-in">INPUT</label>
+											<input class="form-control input-data" id="ShiftRows-in" pattern="^[0-9a-fA-F]{32}$"
+												   name="in" placeholder="32 hex" required>
+										</div>
+										<div class="form-group">
+											<label for="ShiftRows-result">RESULT</label>
+											<input class="form-control" id="ShiftRows-result" name="result" readonly>
+										</div>
+										<button type="submit" class="btn btn-default">ShiftRows</button>
+									</form>
+								</div>
+							</div>
+                            <div class="panel panel-default">
+								<div class="panel-body">
+									<form id="AddRoundKey-form" data-toggle="validator">
+										<div class="form-group">
+											<label for="AddRoundKey-in">INPUT</label>
+											<input class="form-control input-data" id="AddRoundKey-in" pattern="^[0-9a-fA-F]{32}$"
+												   placeholder="32 hex" name="in" required>
+										</div>
+										<div class="form-group">
+											<label for="AddRoundKey-K">K</label>
+											<input class="form-control input-data" id="AddRoundKey-K" pattern="^[0-9a-fA-F]{32}$"
+												   placeholder="32 hex" name="K" required>
+										</div>
+										<div class="form-group">
+											<label for="AddRoundKey-result">RESULT</label>
+											<input class="form-control" id="AddRoundKey-result" name="result" readonly>
+										</div>
+										<button type="submit" class="btn btn-default">AddRoundKey</button>
+									</form>
+								</div>
+							</div>
+						</div>
+						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+							<div class="panel panel-default">
+								<div class="panel-body">
+									<form id="MixColumns-form" data-toggle="validator">
+										<div class="form-group">
+											<label for="MixColumns-in">INPUT</label>
+											<input class="form-control input-data" id="MixColumns-in" pattern="^[0-9a-fA-F]{32}$"
+												   name="in" placeholder="32 hex" required>
+										</div>
+										<div class="form-group">
+											<label for="MixColumns-result">RESULT</label>
+											<input class="form-control" id="MixColumns-result" name="result" readonly>
+										</div>
+										<button type="submit" class="btn btn-default">MixColumns</button>
+									</form>
+								</div>
+							</div>
+							<div class="panel panel-default">
+								<div class="panel-body">
+									<form id="SubBytes-form" data-toggle="validator">
+										<div class="form-group">
+											<label for="SubBytes-in">INPUT</label>
+											<input class="form-control input-data" pattern="^[0-9a-fA-F]{32}$" placeholder="32 hex"
+												   id="SubBytes-in" name="in" required>
+										</div>
+										<div class="form-group">
+											<label for="SubBytes-result">RESULT</label>
+											<input class="form-control" id="SubBytes-result" readonly name="result">
+										</div>
+										<button type="submit" class="btn btn-default">SubBytes</button>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+
 				</div>
 			</div> <!-- row -->
 		</div> <!-- container -->

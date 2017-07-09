@@ -1,9 +1,20 @@
 #include <stdint.h>
+
 # define AES_MAXNR 14
+
+#define GETU32(p) (*((uint32_t*)(p)))
+#define ROTATE(a,n)  ({ register unsigned int ret;   \
+                asm (           \
+                "roll %1,%0"        \
+                : "=r"(ret)     \
+                : "I"(n), "0"(a)    \
+                : "cc");        \
+               ret;             \
+            })
 
 struct _storage {
     char words[44][13];
-    char states[50][49];
+    char states[61][49];
 };
 typedef struct _storage storage;
 storage sto;
@@ -14,14 +25,24 @@ struct aes_key_st {
 };
 typedef struct aes_key_st AES_KEY;
 
+
+void addRoundKey(const unsigned char *in, unsigned char *key, unsigned char *out);
+void shiftRows(const unsigned char *in, unsigned char *out);
+void mixColumns(const unsigned char *in, unsigned char *out);
+void subBytes(const unsigned char *in, unsigned char *out);
+
+
+
 int AES_set_encrypt_key(const unsigned char *userKey, const int bits, AES_KEY *key);
 int AES_set_encrypt_key2(const unsigned char *userKey, const int bits, AES_KEY *key);
 int AES_set_decrypt_key(const unsigned char *userKey, const int bits, AES_KEY *key);
 int AES_set_decrypt_key2_test(const unsigned char *userKey, const int bits, AES_KEY *key);
-void AES_encrypt2(const unsigned char *in, unsigned char *out, const AES_KEY *key);
-void AES_encrypt_data2(const unsigned char *in, unsigned char *out, const AES_KEY *key);
-void AES_decrypt_data2(const unsigned char *in, unsigned char *out, const AES_KEY *key);
-void AES_decrypt(const unsigned char *in, unsigned char *out, const AES_KEY *key);
+void AES_encrypt_file(const unsigned char *in, unsigned char *out, const AES_KEY *key);
+void AES_encrypt_data(const unsigned char *in, unsigned char *out, const AES_KEY *key);
+void AES_decrypt_data(const unsigned char *in, unsigned char *out, const AES_KEY *key);
+void AES_decrypt_file(const unsigned char *in, unsigned char *out, const AES_KEY *key);
+void encrypt_file(char* in, char* out, AES_KEY* aes_key, char*);
+void decrypt_file(char* in, char* out, AES_KEY* aes_key, char*);
 
 static const uint32_t rcon[] = {
         0x00000001U, 0x00000002U, 0x00000004U, 0x00000008U,

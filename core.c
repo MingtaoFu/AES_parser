@@ -2,36 +2,22 @@
 
 #include <stdio.h>
 
-#define GETU32(p) (*((uint32_t*)(p)))
-#define ROTATE(a,n)  ({ register unsigned int ret;   \
-                asm (           \
-                "roll %1,%0"        \
-                : "=r"(ret)     \
-                : "I"(n), "0"(a)    \
-                : "cc");        \
-               ret;             \
-            })
 void print_storage2(char* sto, uint32_t* pt) {
     for (int i = 0; i < 4; i++) {
         uint32_t t = pt[i];
-        printf("%x\n", t );
         for (int j = 0; j < 4; j++) {
             sprintf(&sto[(i * 4 + j) * 3], "%02x ", (t >> (j * 8)) & 0xff );
             //printf("%02x ", (t >> (j * 2)) & 0xff );
         }
-        printf("\n");
-
     }
 }
 
 int AES_set_decrypt_key2_test(const unsigned char *userKey, const int bits, AES_KEY *key) {
-    printf("1111111111\n");
 
     uint32_t *rk;
     int i, j, status;
     uint32_t temp;
 
-    printf("333333333333333\n");
     /* first, start with an encryption schedule */
     status = AES_set_encrypt_key2(userKey, NULL, key);
     //if (status < 0)
@@ -46,7 +32,6 @@ int AES_set_decrypt_key2_test(const unsigned char *userKey, const int bits, AES_
         temp = rk[i + 2]; rk[i + 2] = rk[j + 2]; rk[j + 2] = temp;
         temp = rk[i + 3]; rk[i + 3] = rk[j + 3]; rk[j + 3] = temp;
     }
-    printf("333333333333333\n");
     /* apply the inverse MixColumn transform to all round keys but the first and the last: */
     for (i = 1; i < (key->rounds); i++) {
         rk += 4;
@@ -72,12 +57,11 @@ int AES_set_decrypt_key2_test(const unsigned char *userKey, const int bits, AES_
 
         }
     }
-    printf("333333333333333\n");
 
     return 0;
 }
 
-void AES_decrypt(const unsigned char *in, unsigned char *out, const AES_KEY *key) {
+void AES_decrypt_file(const unsigned char *in, unsigned char *out, const AES_KEY *key) {
 
     const uint32_t *rk;
     uint32_t s0, s1, s2, s3, t[4];
@@ -90,10 +74,10 @@ void AES_decrypt(const unsigned char *in, unsigned char *out, const AES_KEY *key
      * and add initial round key:
      */
 
-    s0 = GETU32(in     );
-    s1 = GETU32(in +  4);
-    s2 = GETU32(in +  8);
-    s3 = GETU32(in + 12);
+    s0 = GETU32(in     ) ^ rk[0];
+    s1 = GETU32(in +  4) ^ rk[1];
+    s2 = GETU32(in +  8) ^ rk[2];
+    s3 = GETU32(in + 12) ^ rk[3];
 
     //prefetch256(Td4);
 
@@ -224,7 +208,7 @@ void AES_decrypt(const unsigned char *in, unsigned char *out, const AES_KEY *key
 }
 
 int AES_set_encrypt_key2(const unsigned char *userKey, const int bits, AES_KEY *key) {
-    printf("-------------------\n%d\n--------------------", 1);
+
     uint32_t *rk, temp;
     int i = 0;
 
@@ -273,8 +257,8 @@ int AES_set_encrypt_key2(const unsigned char *userKey, const int bits, AES_KEY *
      */
 }
 
-void AES_encrypt_data2(const unsigned char *in, unsigned char *out, const AES_KEY *key) {
-    const uint32_t *rk;
+void AES_encrypt_data(const unsigned char *in, unsigned char *out, const AES_KEY *key) {
+    uint32_t *rk;
     uint32_t s[4], t[4];
 
     rk = key->rd_key;
@@ -286,12 +270,15 @@ void AES_encrypt_data2(const unsigned char *in, unsigned char *out, const AES_KE
     // input
     print_storage2(sto.states[0], t);
 
+
+    print_storage2(sto.states[1], rk);
+
     s[0] = t[0] ^ rk[0];
     s[1] = t[1] ^ rk[1];
     s[2] = t[2] ^ rk[2];
     s[3] = t[3] ^ rk[3];
     // addRoundKey
-    print_storage2(sto.states[1], s);
+    print_storage2(sto.states[2], s);
 
     for (int round = 0; round < 9; round++) {
         t[0] = (uint32_t) Te4[(s[0]) & 0xff] ^
@@ -311,7 +298,7 @@ void AES_encrypt_data2(const unsigned char *in, unsigned char *out, const AES_KE
                (uint32_t) Te4[(s[3] >> 16) & 0xff] << 16 ^
                (uint32_t) Te4[(s[3] >> 24)] << 24;
         //subBytes
-        print_storage2(sto.states[round * 4 + 2], t);
+        print_storage2(sto.states[round * 5 + 3], t);
 
         s[0] = ((t[0]) & 0xff) ^
                ((t[1] >> 8) & 0xff) << 8 ^
@@ -330,7 +317,7 @@ void AES_encrypt_data2(const unsigned char *in, unsigned char *out, const AES_KE
                ((t[1] >> 16) & 0xff) << 16 ^
                ((t[2] >> 24)) << 24;
         // shiftRows
-        print_storage2(sto.states[round * 4 + 3], s);
+        print_storage2(sto.states[round * 5 + 4], s);
 
         {
             int i;
@@ -348,13 +335,16 @@ void AES_encrypt_data2(const unsigned char *in, unsigned char *out, const AES_KE
             }
         }
         // mixColumn
-        print_storage2(sto.states[round * 4 + 4], s);
+        print_storage2(sto.states[round * 5 + 5], s);
+
+
+        print_storage2(sto.states[round * 5 + 6], rk+(round+1)*4);
 
         for (int i = 0; i < 4; i++) {
             s[i] ^= rk[(round + 1) * 4 + i];
         }
         // addRoundKey
-        print_storage2(sto.states[round * 4 + 5], s);
+        print_storage2(sto.states[round * 5 + 7], s);
     }
 
     t[0] = (uint32_t) Te4[(s[0]) & 0xff] ^
@@ -374,7 +364,7 @@ void AES_encrypt_data2(const unsigned char *in, unsigned char *out, const AES_KE
            (uint32_t) Te4[(s[3] >> 16) & 0xff] << 16 ^
            (uint32_t) Te4[(s[3] >> 24)] << 24;
     //subBytes
-    print_storage2(sto.states[38], t);
+    print_storage2(sto.states[48], t);
 
     s[0] = ((t[0]) & 0xff) ^
            ((t[1] >> 8) & 0xff) << 8 ^
@@ -393,26 +383,31 @@ void AES_encrypt_data2(const unsigned char *in, unsigned char *out, const AES_KE
            ((t[1] >> 16) & 0xff) << 16 ^
            ((t[2] >> 24)) << 24;
     // shiftRows
-    print_storage2(sto.states[39], s);
+    print_storage2(sto.states[49], s);
 
     for (int i = 0; i < 4; i++) {
         s[i] ^= rk[40 + i];
     }
     // addRoundKey
-    print_storage2(sto.states[40], s);
+
+    print_storage2(sto.states[50], rk+40);
+
     // output
-    print_storage2(sto.states[41], s);
+    print_storage2(sto.states[51], s);
+
+    *(uint32_t*)(out+0) = s[0] ;
+    *(uint32_t*)(out+4) = s[1] ;
+    *(uint32_t*)(out+8) = s[2] ;
+    *(uint32_t*)(out+12) = s[3];
 }
 
-void AES_decrypt_data2(const unsigned char *in, unsigned char *out, const AES_KEY *key) {
-
-    const uint32_t *rk;
+void AES_decrypt_data(const unsigned char *in, unsigned char *out, const AES_KEY *key) {
+    uint32_t *rk;
     uint32_t s[4], t[4];
     int r;
 
     rk = key->rd_key;
 
-    printf("sadsadsadsadsa\n");
     /*
      * map byte array block to cipher state
      * and add initial round key:
@@ -425,54 +420,54 @@ void AES_decrypt_data2(const unsigned char *in, unsigned char *out, const AES_KE
     // input
     print_storage2(sto.states[0], t);
 
+    print_storage2(sto.states[1], rk);
+
     s[0] = t[0] ^ rk[0];
     s[1] = t[1] ^ rk[1];
     s[2] = t[2] ^ rk[2];
     s[3] = t[3] ^ rk[3];
     // addRoundKey
-    print_storage2(sto.states[1], s);
-
+    print_storage2(sto.states[2], s);
 
     for (int round = 0; round < 9; round++) {
-        t[0] = ((s[0]) & 0xff) ^
-               ((s[1] >> 24)) << 24 ^
-               ((s[2] >> 16) & 0xff) << 16 ^
-               ((s[3] >>  8) & 0xff) <<  8;
-        t[1] = ((s[1]) & 0xff) ^
-               ((s[0] >> 8) & 0xff) << 8 ^
-               ((s[3] >> 16) & 0xff) << 16 ^
-               ((s[2] >> 24)) << 24;
-        t[2] = ((s[2]) & 0xff) ^
-               ((s[1] >> 8) & 0xff) << 8 ^
-               ((s[0] >> 16) & 0xff) << 16 ^
-               ((s[3] >> 24)) << 24;
-        t[3] = ((s[3]) & 0xff) ^
-               ((s[2] >> 8) & 0xff) << 8 ^
-               ((s[1] >> 16) & 0xff) << 16 ^
-               ((s[0] >> 24)) << 24;
-        // invShiftRows
-        print_storage2(sto.states[round * 4 + 2], t);
-
-
-        s[0] = (uint32_t) Td4[(t[0]) & 0xff] ^
-               (uint32_t) Td4[(t[0] >> 8) & 0xff] << 8 ^
-               (uint32_t) Td4[(t[0] >> 16) & 0xff] << 16 ^
-               (uint32_t) Td4[(t[0] >> 24)] << 24;
-        s[1] = (uint32_t) Td4[(t[1]) & 0xff] ^
-               (uint32_t) Td4[(t[1] >> 8) & 0xff] << 8 ^
-               (uint32_t) Td4[(t[1] >> 16) & 0xff] << 16 ^
-               (uint32_t) Td4[(t[1] >> 24)] << 24;
-        s[2] = (uint32_t) Td4[(t[2]) & 0xff] ^
-               (uint32_t) Td4[(t[2] >> 8) & 0xff] << 8 ^
-               (uint32_t) Td4[(t[2] >> 16) & 0xff] << 16 ^
-               (uint32_t) Td4[(t[2] >> 24)] << 24;
-        s[3] = (uint32_t) Td4[(t[3]) & 0xff] ^
-               (uint32_t) Td4[(t[3] >> 8) & 0xff] << 8 ^
-               (uint32_t) Td4[(t[3] >> 16) & 0xff] << 16 ^
-               (uint32_t) Td4[(t[3] >> 24)] << 24;
+        t[0] = (uint32_t) Td4[(s[0]) & 0xff] ^
+               (uint32_t) Td4[(s[0] >> 8) & 0xff] << 8 ^
+               (uint32_t) Td4[(s[0] >> 16) & 0xff] << 16 ^
+               (uint32_t) Td4[(s[0] >> 24)] << 24;
+        t[1] = (uint32_t) Td4[(s[1]) & 0xff] ^
+               (uint32_t) Td4[(s[1] >> 8) & 0xff] << 8 ^
+               (uint32_t) Td4[(s[1] >> 16) & 0xff] << 16 ^
+               (uint32_t) Td4[(s[1] >> 24)] << 24;
+        t[2] = (uint32_t) Td4[(s[2]) & 0xff] ^
+               (uint32_t) Td4[(s[2] >> 8) & 0xff] << 8 ^
+               (uint32_t) Td4[(s[2] >> 16) & 0xff] << 16 ^
+               (uint32_t) Td4[(s[2] >> 24)] << 24;
+        t[3] = (uint32_t) Td4[(s[3]) & 0xff] ^
+               (uint32_t) Td4[(s[3] >> 8) & 0xff] << 8 ^
+               (uint32_t) Td4[(s[3] >> 16) & 0xff] << 16 ^
+               (uint32_t) Td4[(s[3] >> 24)] << 24;
         //invSubBytes
-        print_storage2(sto.states[round * 4 + 3], s);
+        print_storage2(sto.states[round * 5 + 3], t);
 
+
+        s[0] = ((t[0]) & 0xff) ^
+               ((t[1] >> 24)) << 24 ^
+               ((t[2] >> 16) & 0xff) << 16 ^
+               ((t[3] >>  8) & 0xff) <<  8;
+        s[1] = ((t[1]) & 0xff) ^
+               ((t[0] >> 8) & 0xff) << 8 ^
+               ((t[3] >> 16) & 0xff) << 16 ^
+               ((t[2] >> 24)) << 24;
+        s[2] = ((t[2]) & 0xff) ^
+               ((t[1] >> 8) & 0xff) << 8 ^
+               ((t[0] >> 16) & 0xff) << 16 ^
+               ((t[3] >> 24)) << 24;
+        s[3] = ((t[3]) & 0xff) ^
+               ((t[2] >> 8) & 0xff) << 8 ^
+               ((t[1] >> 16) & 0xff) << 16 ^
+               ((t[0] >> 24)) << 24;
+        // invShiftRows
+        print_storage2(sto.states[round * 5 + 4], s);
 
 
         /* now do the linear transform using words */
@@ -497,17 +492,20 @@ void AES_decrypt_data2(const unsigned char *in, unsigned char *out, const AES_KE
                 tpe = tp8 ^ tp4 ^ tp2;
                 s[i] = tpe ^ ROTATE(tpd, 16) ^
                        ROTATE(tp9, 8) ^ ROTATE(tpb, 24);
-                //t[i] ^= rk[4+i];
             }
         }
         // mixColumn
-        print_storage2(sto.states[round * 4 + 4], s);
+        print_storage2(sto.states[round * 5 + 5], s);
+
+
+        print_storage2(sto.states[round * 5 + 6], rk+(round+1)*4);
+
 
         for (int i = 0; i < 4; i++) {
             s[i] ^= rk[(round + 1) * 4 + i];
         }
         // addRoundKey
-        print_storage2(sto.states[round * 4 + 5], s);
+        print_storage2(sto.states[round * 5 + 7], s);
     }
 
     /*
@@ -515,67 +513,72 @@ void AES_decrypt_data2(const unsigned char *in, unsigned char *out, const AES_KE
      * map cipher state to byte array block:
      */
 
-    //prefetch256(Td4);
-    t[0] = ((s[0]) & 0xff) ^
-           ((s[1] >> 24)) << 24 ^
-           ((s[2] >> 16) & 0xff) << 16 ^
-           ((s[3] >>  8) & 0xff) <<  8;
-    t[1] = ((s[1]) & 0xff) ^
-           ((s[0] >> 8) & 0xff) << 8 ^
-           ((s[3] >> 16) & 0xff) << 16 ^
-           ((s[2] >> 24)) << 24;
-    t[2] = ((s[2]) & 0xff) ^
-           ((s[1] >> 8) & 0xff) << 8 ^
-           ((s[0] >> 16) & 0xff) << 16 ^
-           ((s[3] >> 24)) << 24;
-    t[3] = ((s[3]) & 0xff) ^
-           ((s[2] >> 8) & 0xff) << 8 ^
-           ((s[1] >> 16) & 0xff) << 16 ^
-           ((s[0] >> 24)) << 24;
-    // shiftRows
-    print_storage2(sto.states[38], t);
-
-    s[0] = (uint32_t) Td4[(t[0]) & 0xff] ^
-           (uint32_t) Td4[(t[0] >> 8) & 0xff] << 8 ^
-           (uint32_t) Td4[(t[0] >> 16) & 0xff] << 16 ^
-           (uint32_t) Td4[(t[0] >> 24)] << 24;
-    s[1] = (uint32_t) Td4[(t[1]) & 0xff] ^
-           (uint32_t) Td4[(t[1] >> 8) & 0xff] << 8 ^
-           (uint32_t) Td4[(t[1] >> 16) & 0xff] << 16 ^
-           (uint32_t) Td4[(t[1] >> 24)] << 24;
-    s[2] = (uint32_t) Td4[(t[2]) & 0xff] ^
-           (uint32_t) Td4[(t[2] >> 8) & 0xff] << 8 ^
-           (uint32_t) Td4[(t[2] >> 16) & 0xff] << 16 ^
-           (uint32_t) Td4[(t[2] >> 24)] << 24;
-    s[3] = (uint32_t) Td4[(t[3]) & 0xff] ^
-           (uint32_t) Td4[(t[3] >> 8) & 0xff] << 8 ^
-           (uint32_t) Td4[(t[3] >> 16) & 0xff] << 16 ^
-           (uint32_t) Td4[(t[3] >> 24)] << 24;
+    t[0] = (uint32_t) Td4[(s[0]) & 0xff] ^
+           (uint32_t) Td4[(s[0] >> 8) & 0xff] << 8 ^
+           (uint32_t) Td4[(s[0] >> 16) & 0xff] << 16 ^
+           (uint32_t) Td4[(s[0] >> 24)] << 24;
+    t[1] = (uint32_t) Td4[(s[1]) & 0xff] ^
+           (uint32_t) Td4[(s[1] >> 8) & 0xff] << 8 ^
+           (uint32_t) Td4[(s[1] >> 16) & 0xff] << 16 ^
+           (uint32_t) Td4[(s[1] >> 24)] << 24;
+    t[2] = (uint32_t) Td4[(s[2]) & 0xff] ^
+           (uint32_t) Td4[(s[2] >> 8) & 0xff] << 8 ^
+           (uint32_t) Td4[(s[2] >> 16) & 0xff] << 16 ^
+           (uint32_t) Td4[(s[2] >> 24)] << 24;
+    t[3] = (uint32_t) Td4[(s[3]) & 0xff] ^
+           (uint32_t) Td4[(s[3] >> 8) & 0xff] << 8 ^
+           (uint32_t) Td4[(s[3] >> 16) & 0xff] << 16 ^
+           (uint32_t) Td4[(s[3] >> 24)] << 24;
     //subBytes
-    print_storage2(sto.states[39], s);
+    print_storage2(sto.states[48], t);
+
+
+    //prefetch256(Td4);
+    s[0] = ((t[0]) & 0xff) ^
+           ((t[1] >> 24)) << 24 ^
+           ((t[2] >> 16) & 0xff) << 16 ^
+           ((t[3] >>  8) & 0xff) <<  8;
+    s[1] = ((t[1]) & 0xff) ^
+           ((t[0] >> 8) & 0xff) << 8 ^
+           ((t[3] >> 16) & 0xff) << 16 ^
+           ((t[2] >> 24)) << 24;
+    s[2] = ((t[2]) & 0xff) ^
+           ((t[1] >> 8) & 0xff) << 8 ^
+           ((t[0] >> 16) & 0xff) << 16 ^
+           ((t[3] >> 24)) << 24;
+    s[3] = ((t[3]) & 0xff) ^
+           ((t[2] >> 8) & 0xff) << 8 ^
+           ((t[1] >> 16) & 0xff) << 16 ^
+           ((t[0] >> 24)) << 24;
+    // shiftRows
+    print_storage2(sto.states[49], s);
+
 
     for (int i = 0; i < 4; i++) {
         s[i] ^= rk[40 + i];
     }
     // addRoundKey
-    print_storage2(sto.states[40], s);
+    print_storage2(sto.states[50], rk+40);
        // output
-    print_storage2(sto.states[41], s);
+    print_storage2(sto.states[51], s);
 
-
+    *(uint32_t*)(out+0) = s[0] ;
+    *(uint32_t*)(out+4) = s[1] ;
+    *(uint32_t*)(out+8) = s[2] ;
+    *(uint32_t*)(out+12) = s[3];
 }
 
-void AES_encrypt2(const unsigned char *in, unsigned char *out, const AES_KEY *key) {
+void AES_encrypt_file(const unsigned char *in, unsigned char *out, const AES_KEY *key) {
     const uint32_t *rk;
     uint32_t s0, s1, s2, s3, t[4];
     int r;
 
     rk = key->rd_key;
 
-    s0 = 0x206F7754 ^ rk[0];
-    s1 = 0x20656E4F ^ rk[1];
-    s2 = 0x656E694E ^ rk[2];
-    s3 = 0x6F775420 ^ rk[3];
+    s0 = GETU32(in     ) ^ rk[0];
+    s1 = GETU32(in +  4) ^ rk[1];
+    s2 = GETU32(in +  8) ^ rk[2];
+    s3 = GETU32(in + 12) ^ rk[3];
 
     //prefetch256(Te4);
 
@@ -633,13 +636,13 @@ void AES_encrypt2(const unsigned char *in, unsigned char *out, const AES_KEY *ke
                (uint32_t)Te4[(s1 >> 16) & 0xff] << 16 ^
                (uint32_t)Te4[(s2 >> 24)       ] << 24;
 
-        printf("打印第k%d轮2后的结果\n", r);
-        printf("%8x\n", t[0]);
-        printf("%8x\n", t[1]);
-        printf("%8x\n", t[2]);
-        printf("%8x\n", t[3]);
-        /* now do the linear transform using words */
-        printf("打印第k%d轮3后的结果\n", r);
+//        printf("打印第k%d轮2后的结果\n", r);
+//        printf("%8x\n", t[0]);
+//        printf("%8x\n", t[1]);
+//        printf("%8x\n", t[2]);
+//        printf("%8x\n", t[3]);
+//        /* now do the linear transform using words */
+//        printf("打印第k%d轮3后的结果\n", r);
         {
             int i;
             uint32_t r0, r1, r2;
@@ -651,30 +654,30 @@ void AES_encrypt2(const unsigned char *in, unsigned char *out, const AES_KEY *ke
                 r2 = ((r0 & 0x7f7f7f7f) << 1) ^
                      ((r1 - (r1 >> 7)) & 0x1b1b1b1b);
 
-                printf("r1       ): %8x\n", r1);
-                printf("r1-(r1>>7)&0x1b1b1b1b: %8x\n", (r1-(r1>>7))&0x1b1b1b1b);
-                printf("r0: %8x\n", r0);
-                printf("r1: %8x\n", r1);
-                printf("r2    : %8x\n", r2);
-                printf("r2->24: %8x\n", ROTATE(r2, 24));
-                printf("r0->24: %8x\n", ROTATE(r0, 24));
-                printf("r0->16: %8x\n", ROTATE(r0, 16));
-                printf("r0-> 8: %8x\n", ROTATE(r0, 8));
+//                printf("r1       ): %8x\n", r1);
+//                printf("r1-(r1>>7)&0x1b1b1b1b: %8x\n", (r1-(r1>>7))&0x1b1b1b1b);
+//                printf("r0: %8x\n", r0);
+//                printf("r1: %8x\n", r1);
+//                printf("r2    : %8x\n", r2);
+//                printf("r2->24: %8x\n", ROTATE(r2, 24));
+//                printf("r0->24: %8x\n", ROTATE(r0, 24));
+//                printf("r0->16: %8x\n", ROTATE(r0, 16));
+//                printf("r0-> 8: %8x\n", ROTATE(r0, 8));
 
                 t[i] = r2 ^ ROTATE(r2,24) ^ ROTATE(r0,24) ^
                        ROTATE(r0,16) ^ ROTATE(r0,8);
 
-                printf("%8x\n", t[i]);
+                //printf("%8x\n", t[i]);
                 t[i] ^= rk[i];
             }
         }
         s0 = t[0]; s1 = t[1]; s2 = t[2]; s3 = t[3];
 
-        printf("打印第k%d轮4后的结果\n", r);
-        printf("%8x\n", s0);
-        printf("%8x\n", s1);
-        printf("%8x\n", s2);
-        printf("%8x\n", s3);
+//        printf("打印第k%d轮4后的结果\n", r);
+//        printf("%8x\n", s0);
+//        printf("%8x\n", s1);
+//        printf("%8x\n", s2);
+//        printf("%8x\n", s3);
     }
     /*
      * apply last round and

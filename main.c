@@ -2,8 +2,12 @@
 #include "main.h"
 
 int main() {
+
+    const unsigned char key[] =
+            {0x54, 0x68, 0x61, 0x74, 0x73, 0x20, 0x6d,
+             0x79, 0x20, 0x4b, 0x75, 0x6e, 0x67, 0x20, 0x46, 0x75};
     AES_KEY aes_key;
-    AES_set_encrypt_key(NULL, NULL, &aes_key);
+    AES_set_encrypt_key2(key, NULL, &aes_key);
 
     /*
     int rounds = aes_key.rounds + 1;
@@ -22,18 +26,19 @@ int main() {
             {0x54, 0x77, 0x6F, 0x20, 0x4F, 0x6E, 0x65,
              0x20, 0x4E, 0x69, 0x6E, 0x65, 0x20, 0x54, 0x77, 0x6F};
     unsigned char out[16];
-    AES_encrypt(paint, out, &aes_key);
+    AES_encrypt_file(paint, out, &aes_key);
     for (int i = 0; i < 16; i++) {
         printf("%x", out[i]);
     }
 
-    AES_set_decrypt_key(NULL, NULL, &aes_key);
+    AES_set_decrypt_key2_test(key, NULL, &aes_key);
 
 
     printf("\n");
-    AES_decrypt(NULL, out, &aes_key);
+    unsigned char out2[16];
+    AES_decrypt(out, out2, &aes_key);
     for (int i = 0; i < 16; i++) {
-        printf("%x", out[i]);
+        printf("%x", out2[i]);
     }
 
     return 0;

@@ -1,10 +1,12 @@
 try {
+    window.allow_file_operation = true;
+
     var addon = require("./addon");
 	var AES_data = addon.AES_data;
-    var F_computing = addon.F_computing;
-    var XOR_computing = addon.XOR_computing;
-    var E_computing = addon.E_computing;
-    var SBOX_computing = addon.SBOX_computing;
+    var addRoundKey_computing = addon.addRoundKey_computing;
+    var shiftRows_computing = addon.shiftRows_computing;
+    var mixColumns_computing = addon.mixColumns_computing;
+    var subBytes_computing = addon.subBytes_computing;
     var file_operation = addon.file_operation;
 
 	var data_key_DOM = document.querySelector("#data-key");
@@ -13,7 +15,11 @@ try {
 	var keys_container = document.querySelectorAll("#keys-container div");
 	var states_container = document.querySelectorAll("#state-container div");
 
-	document.querySelector("#data-encrypt-btn").addEventListener("click", function() {
+    $(document).bind("input", ".input-data", function (e) {
+        e.target.value = e.target.value.replace(/ /g, "");
+    });
+
+    document.querySelector("#data-encrypt-btn").addEventListener("click", function() {
 		if ($(this).hasClass("disabled")) {
 		    return false;
         }
@@ -57,25 +63,39 @@ try {
         }
     });
 
-	document.querySelector("#F-form").addEventListener("submit", function (e) {
-	    e.preventDefault();
-	    this.result.value = F_computing(this.R.value, "0000" + this.K.value);
+	document.querySelector("#AddRoundKey-form").addEventListener("submit", function (e) {
+        if ($("button", this).hasClass("disabled")) {
+            return false;
+        }
+
+        e.preventDefault();
+	    this.result.value = addRoundKey_computing(this.in.value, this.K.value);
     });
 
-	document.querySelector("#XOR-form").addEventListener("submit", function (e) {
+	document.querySelector("#ShiftRows-form").addEventListener("submit", function (e) {
+	    if ($("button", this).hasClass("disabled")) {
+            return false;
+        }
 	    e.preventDefault();
-	    this.result.value = XOR_computing(this.param1.value, this.param2.value);
+	    this.result.value = shiftRows_computing(this.in.value);
     });
 
-	document.querySelector("#E-form").addEventListener("submit", function (e) {
+	document.querySelector("#MixColumns-form").addEventListener("submit", function (e) {
+	    if ($("button", this).hasClass("disabled")) {
+            return false;
+        }
 	    e.preventDefault();
-	    this.result.value = E_computing(this.r.value);
+	    this.result.value = mixColumns_computing(this.in.value);
     });
 
-	document.querySelector("#SBOX-form").addEventListener("submit", function (e) {
+	document.querySelector("#SubBytes-form").addEventListener("submit", function (e) {
+	    if ($("button", this).hasClass("disabled")) {
+            return false;
+        }
 	    e.preventDefault();
-	    this.result.value = SBOX_computing("0000" + this.input.value);
+	    this.result.value = subBytes_computing(this.in.value);
     });
+
 
 	var open_path_DOM = document.querySelector("#open-path");
     var save_path_DOM = document.querySelector("#save-path");
@@ -111,9 +131,31 @@ try {
 
     var file_key_DOM = document.querySelector("#file-key");
     document.querySelector("#file-encrypt-btn").addEventListener("click", function() {
-        console.log(11)
+        if ( !window.allow_file_operation || $(this).hasClass("disabled") ) {
+            return false;
+        }
+        window.allow_file_operation = false;
         file_operation("-ef", file_key_DOM.value,  open_path_DOM.value, save_path_DOM.value, function (e) {
-            alert(e);
+            if (e === "") {
+                alert("Encryption finished");
+            } else {
+                alert(e);
+            }
+            window.allow_file_operation = true;
+        });
+    });
+    document.querySelector("#file-decrypt-btn").addEventListener("click", function() {
+        if ( !window.allow_file_operation || $(this).hasClass("disabled") ) {
+            return false;
+        }
+        window.allow_file_operation = false;
+        file_operation("-df", file_key_DOM.value,  open_path_DOM.value, save_path_DOM.value, function (e) {
+            if (e === "") {
+                alert("Decryption finished");
+            } else {
+                alert(e);
+            }
+            window.allow_file_operation = true;
         });
     });
 
